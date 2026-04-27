@@ -43,11 +43,26 @@ class _HomePageState extends State<HomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Text('You have pushed the button this many times:'),
-            Text(
-              '${widget.counterState.counterValue}',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
+            if (widget.counterState.counterValue == 0) ...[
+              const Icon(
+                Icons.ads_click,
+                size: 64,
+                color: Colors.black54,
+                semanticLabel: 'Empty state icon',
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'Push the button to start counting!',
+                style: TextStyle(color: Colors.black54, fontSize: 16),
+              ),
+            ] else ...[
+              const Text('You have pushed the button this many times:'),
+              Text(
+                '${widget.counterState.counterValue}',
+                style: Theme.of(context).textTheme.headlineMedium,
+                semanticsLabel: '${widget.counterState.counterValue} presses',
+              ),
+            ],
           ],
         ),
       ),
