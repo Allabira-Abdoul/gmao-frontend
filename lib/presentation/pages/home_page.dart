@@ -18,18 +18,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    widget.counterState.addListener(_onStateChanged);
     widget.counterState.loadCounter();
-  }
-
-  @override
-  void dispose() {
-    widget.counterState.removeListener(_onStateChanged);
-    super.dispose();
-  }
-
-  void _onStateChanged() {
-    if (mounted) setState(() {});
   }
 
   @override
@@ -44,9 +33,16 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text('You have pushed the button this many times:'),
-            Text(
-              '${widget.counterState.counterValue}',
-              style: Theme.of(context).textTheme.headlineMedium,
+            // ⚡ Bolt Optimization: Use ListenableBuilder to prevent full page re-renders.
+            // This scopes rebuilds strictly to the Text widget when counter changes.
+            ListenableBuilder(
+              listenable: widget.counterState,
+              builder: (context, _) {
+                return Text(
+                  '${widget.counterState.counterValue}',
+                  style: Theme.of(context).textTheme.headlineMedium,
+                );
+              },
             ),
           ],
         ),

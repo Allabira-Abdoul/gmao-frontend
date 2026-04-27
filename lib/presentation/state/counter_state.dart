@@ -15,8 +15,8 @@ class CounterState extends ChangeNotifier {
   CounterState({
     required GetCounterUseCase getCounterUseCase,
     required IncrementCounterUseCase incrementCounterUseCase,
-  })  : _getCounterUseCase = getCounterUseCase,
-        _incrementCounterUseCase = incrementCounterUseCase;
+  }) : _getCounterUseCase = getCounterUseCase,
+       _incrementCounterUseCase = incrementCounterUseCase;
 
   Future<void> loadCounter() async {
     final counter = await _getCounterUseCase.execute();
