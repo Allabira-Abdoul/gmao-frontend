@@ -37,37 +37,44 @@ class _HomePageState extends State<HomePage> {
             ListenableBuilder(
               listenable: widget.counterState,
               builder: (context, _) {
-                // UX Empty State
-                if (widget.counterState.counterValue == 0) {
-                  return const Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(
-                        Icons.ads_click,
-                        size: 64,
-                        color: Colors.black54,
-                        semanticLabel: 'Empty state icon',
-                      ),
-                      SizedBox(height: 16),
-                      Text(
-                        'Push the button to start counting!',
-                        style: TextStyle(color: Colors.black54, fontSize: 16),
-                      ),
-                    ],
-                  );
-                }
-
-                // Active Counter State
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Text('You have pushed the button this many times:'),
-                    Text(
-                      '${widget.counterState.counterValue}',
-                      style: Theme.of(context).textTheme.headlineMedium,
-                      semanticsLabel: '${widget.counterState.counterValue} presses',
-                    ),
-                  ],
+                return AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 300),
+                  child: widget.counterState.counterValue == 0
+                      ? const Column(
+                          key: ValueKey('empty_state'),
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(
+                              Icons.ads_click,
+                              size: 64,
+                              color: Colors.black54,
+                            ),
+                            SizedBox(height: 16),
+                            Text(
+                              'Push the button to start counting!',
+                              style: TextStyle(
+                                color: Colors.black54,
+                                fontSize: 16,
+                              ),
+                            ),
+                          ],
+                        )
+                      : Column(
+                          key: const ValueKey('active_state'),
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Text(
+                              'You have pushed the button this many times:',
+                            ),
+                            Text(
+                              '${widget.counterState.counterValue}',
+                              key: const ValueKey('counter_text'),
+                              style: Theme.of(context).textTheme.headlineMedium,
+                              semanticsLabel:
+                                  '${widget.counterState.counterValue} presses',
+                            ),
+                          ],
+                        ),
                 );
               },
             ),

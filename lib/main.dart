@@ -24,7 +24,7 @@ import 'package:frontend/presentation/pages/home_page.dart';
 void main() {
   // 1. Infrastructure layer — choose concrete adapters
   final counterRepository = InMemoryCounterRepository();
-//
+  //
   // 2. Application layer — create use cases with injected ports
   final getCounterUseCase = GetCounterUseCase(counterRepository);
   final incrementCounterUseCase = IncrementCounterUseCase(counterRepository);
