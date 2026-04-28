@@ -65,7 +65,8 @@ class _HomePageState extends State<HomePage> {
                     Text(
                       '${widget.counterState.counterValue}',
                       style: Theme.of(context).textTheme.headlineMedium,
-                      semanticsLabel: '${widget.counterState.counterValue} presses',
+                      semanticsLabel:
+                          '${widget.counterState.counterValue} presses',
                     ),
                   ],
                 );
