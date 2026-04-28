@@ -19,8 +19,11 @@ void main() {
     // Build our app and trigger a frame.
     await tester.pumpWidget(MyApp(counterState: counterState));
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
+    // Wait for the state to load
+    await tester.pumpAndSettle();
+
+    // Verify that our counter starts with the empty state.
+    expect(find.text('Push the button to start counting!'), findsOneWidget);
     expect(find.text('1'), findsNothing);
 
     // Tap the '+' icon and trigger a frame.
@@ -28,7 +31,7 @@ void main() {
     await tester.pump();
 
     // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
+    expect(find.text('Push the button to start counting!'), findsNothing);
     expect(find.text('1'), findsOneWidget);
   });
 }
