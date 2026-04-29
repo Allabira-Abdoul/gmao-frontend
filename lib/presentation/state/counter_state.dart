@@ -20,13 +20,19 @@ class CounterState extends ChangeNotifier {
 
   Future<void> loadCounter() async {
     final counter = await _getCounterUseCase.execute();
-    _counterValue = counter.value;
-    notifyListeners();
+    // ⚡ Bolt Optimization: Only notify listeners if the value actually changed to prevent unnecessary rebuilds
+    if (_counterValue != counter.value) {
+      _counterValue = counter.value;
+      notifyListeners();
+    }
   }
 
   Future<void> incrementCounter() async {
     final counter = await _incrementCounterUseCase.execute();
-    _counterValue = counter.value;
-    notifyListeners();
+    // ⚡ Bolt Optimization: Only notify listeners if the value actually changed to prevent unnecessary rebuilds
+    if (_counterValue != counter.value) {
+      _counterValue = counter.value;
+      notifyListeners();
+    }
   }
 }
