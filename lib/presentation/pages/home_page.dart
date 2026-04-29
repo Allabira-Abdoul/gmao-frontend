@@ -33,21 +33,22 @@ class _HomePageState extends State<HomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // ⚡ Bolt Optimization: Use ListenableBuilder to prevent full page re-renders.
-            // This scopes rebuilds strictly to the conditional UI when the counter changes.
             ListenableBuilder(
               listenable: widget.counterState,
               builder: (context, _) {
                 return AnimatedSwitcher(
                   duration: const Duration(milliseconds: 300),
+                  // AnimatedSwitcher requires unique keys to identify when to animate
                   child: widget.counterState.counterValue == 0
-                      ? const Column(
-                          key: ValueKey('empty_state'),
+                      ? Column(
+                          key: const ValueKey('empty_state'),
                           mainAxisSize: MainAxisSize.min,
-                          children: [
+                          children: const [
                             Icon(
                               Icons.ads_click,
                               size: 64,
                               color: Colors.black54,
+                              semanticLabel: 'Empty state icon',
                             ),
                             SizedBox(height: 16),
                             Text(
