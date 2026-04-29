@@ -67,12 +67,15 @@ class _HomePageState extends State<HomePage> {
                             const Text(
                               'You have pushed the button this many times:',
                             ),
-                            Text(
-                              '${widget.counterState.counterValue}',
-                              key: const ValueKey('counter_text'),
-                              style: Theme.of(context).textTheme.headlineMedium,
-                              semanticsLabel:
-                                  '${widget.counterState.counterValue} presses',
+                            Semantics(
+                              liveRegion: true,
+                              child: Text(
+                                '${widget.counterState.counterValue}',
+                                key: const ValueKey('counter_text'),
+                                style: Theme.of(context).textTheme.headlineMedium,
+                                semanticsLabel:
+                                    '${widget.counterState.counterValue} presses',
+                              ),
                             ),
                           ],
                         ),
