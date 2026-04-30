@@ -14,14 +14,16 @@ import 'package:frontend/application/usecases/login_usecase.dart';
 // Presentation
 import 'package:frontend/presentation/state/counter_state.dart';
 import 'package:frontend/presentation/state/auth_state.dart';
-import 'package:frontend/presentation/pages/home_page.dart';
 import 'package:frontend/presentation/pages/login_page.dart';
 import 'package:frontend/presentation/pages/technicien_dashboard.dart';
 import 'package:frontend/presentation/pages/manager_dashboard.dart';
 import 'package:frontend/presentation/pages/admin_dashboard.dart';
 import 'package:frontend/presentation/pages/unauthorized_platform_page.dart';
 
-void main() {
+void main() async {
+  // Initialize Flutter first to allow us to run context.read
+  WidgetsFlutterBinding.ensureInitialized();
+  
   // Infrastructure
   final counterRepository = InMemoryCounterRepository();
   final authRepository = HttpAuthRepository();
