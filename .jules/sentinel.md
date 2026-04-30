@@ -6,3 +6,7 @@
 **Vulnerability:** Missing Content Security Policy (CSP) allowing XSS attacks.
 **Learning:** Adding a CSP to a Flutter Web app using CanvasKit requires `https://www.gstatic.com` in `script-src` and `connect-src` directives to download `canvaskit.js` and `canvaskit.wasm`. A default strict CSP will break rendering.
 **Prevention:** Always ensure `https://www.gstatic.com` is whitelisted when adding CSP headers for Flutter Web.
+## 2024-05-24 - Android Backup Data Leakage Prevention
+**Vulnerability:** Android application backup enabled by default.
+**Learning:** Default Android configurations allow local app data to be backed up (e.g. via `adb backup`). This can lead to local data leakage of sensitive user information, settings, or database content to an attacker with physical access or malicious apps exploiting backup configurations.
+**Prevention:** Explicitly set `android:allowBackup="false"` and `android:fullBackupContent="false"` in the `<application>` tag of `AndroidManifest.xml` to prevent unintentional exposure of app data.
