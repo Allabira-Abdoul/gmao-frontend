@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 // Infrastructure (Adapters)
 import 'package:frontend/infrastructure/repositories/in_memory_counter_repository.dart';
@@ -10,26 +11,13 @@ import 'package:frontend/application/usecases/increment_counter_usecase.dart';
 // Presentation
 import 'package:frontend/presentation/state/counter_state.dart';
 import 'package:frontend/presentation/pages/home_page.dart';
+import 'package:frontend/presentation/pages/login_page.dart';
 
-/// Application entry point — acts as the **Composition Root**.
-///
-/// All dependency wiring happens here:
-///   Infrastructure → Application → Presentation
-///
-/// No layer references a layer it shouldn't:
-///   Domain   → (nothing)
-///   Application → Domain
-///   Infrastructure → Domain
-///   Presentation → Application
 void main() {
-  // 1. Infrastructure layer — choose concrete adapters
   final counterRepository = InMemoryCounterRepository();
-  //
-  // 2. Application layer — create use cases with injected ports
   final getCounterUseCase = GetCounterUseCase(counterRepository);
   final incrementCounterUseCase = IncrementCounterUseCase(counterRepository);
 
-  // 3. Presentation layer — create state with injected use cases
   final counterState = CounterState(
     getCounterUseCase: getCounterUseCase,
     incrementCounterUseCase: incrementCounterUseCase,
@@ -46,13 +34,17 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'GMAO Frontend',
+      title: 'GMAO Premium',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: const Color(0xFF764BA2),
+          brightness: Brightness.light,
+        ),
+        textTheme: GoogleFonts.interTextTheme(),
         useMaterial3: true,
       ),
-      home: HomePage(counterState: counterState),
+      home: const LoginPage(),
     );
   }
 }
