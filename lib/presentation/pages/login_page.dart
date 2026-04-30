@@ -1,6 +1,8 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:provider/provider.dart';
+import 'package:frontend/presentation/state/auth_state.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -14,8 +16,34 @@ class _LoginPageState extends State<LoginPage> {
   final _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
 
+  Future<void> _handleLogin() async {
+    final authState = context.read<AuthState>();
+    
+    await authState.login(
+      _emailController.text.trim(),
+      _passwordController.text,
+    );
+
+    if (mounted) {
+      if (authState.status == AuthStatus.authenticated) {
+        final redirectPath = authState.getPlatformRedirect();
+        if (redirectPath != null) {
+          Navigator.of(context).pushReplacementNamed(redirectPath);
+        }
+      } else if (authState.status == AuthStatus.error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(authState.errorMessage ?? 'Erreur de connexion'),
+            backgroundColor: Colors.redAccent,
+          ),
+        );
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    // ... existing build method content ...
     return Scaffold(
       body: Stack(
         children: [
@@ -196,121 +224,134 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget _buildLoginForm() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(
-          'Connexion',
-          style: GoogleFonts.outfit(
-            fontSize: 24,
-            fontWeight: FontWeight.w600,
-            color: Colors.white,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Text(
-          'Heureux de vous revoir !',
-          style: GoogleFonts.inter(
-            fontSize: 14,
-            color: Colors.white.withOpacity(0.7),
-          ),
-        ),
-        const SizedBox(height: 32),
-        
-        // Email Field
-        _buildTextField(
-          label: 'Email',
-          controller: _emailController,
-          icon: Icons.email_outlined,
-          keyboardType: TextInputType.emailAddress,
-        ),
-        const SizedBox(height: 20),
-        
-        // Password Field
-        _buildTextField(
-          label: 'Mot de passe',
-          controller: _passwordController,
-          icon: Icons.lock_outline,
-          isPassword: true,
-          isPasswordVisible: _isPasswordVisible,
-          onPasswordToggle: () {
-            setState(() {
-              _isPasswordVisible = !_isPasswordVisible;
-            });
-          },
-        ),
-        
-        const SizedBox(height: 12),
-        Align(
-          alignment: Alignment.centerRight,
-          child: TextButton(
-            onPressed: () {},
-            child: Text(
-              'Mot de passe oublié ?',
-              style: GoogleFonts.inter(
-                color: Colors.white.withOpacity(0.8),
-                fontSize: 13,
-              ),
-            ),
-          ),
-        ),
-        
-        const SizedBox(height: 24),
-        
-        // Login Button
-        SizedBox(
-          width: double.infinity,
-          height: 54,
-          child: ElevatedButton(
-            onPressed: () {
-              // TODO: Implement login logic
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.white,
-              foregroundColor: const Color(0xFF764BA2),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              elevation: 0,
-            ),
-            child: Text(
-              'Se connecter',
-              style: GoogleFonts.outfit(
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ),
-        
-        const SizedBox(height: 24),
-        
-        // Footer
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+    return Consumer<AuthState>(
+      builder: (context, authState, child) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Text(
-              'Pas encore de compte ?',
-              style: GoogleFonts.inter(
-                color: Colors.white.withOpacity(0.7),
-                fontSize: 14,
+              'Connexion',
+              style: GoogleFonts.outfit(
+                fontSize: 24,
+                fontWeight: FontWeight.w600,
+                color: Colors.white,
               ),
             ),
-            TextButton(
-              onPressed: () {},
-              child: Text(
-                'S\'inscrire',
-                style: GoogleFonts.inter(
-                  color: Colors.white,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
+            const SizedBox(height: 8),
+            Text(
+              'Heureux de vous revoir !',
+              style: GoogleFonts.inter(
+                fontSize: 14,
+                color: Colors.white.withOpacity(0.7),
+              ),
+            ),
+            const SizedBox(height: 32),
+            
+            // Email Field
+            _buildTextField(
+              label: 'Email',
+              controller: _emailController,
+              icon: Icons.email_outlined,
+              keyboardType: TextInputType.emailAddress,
+              enabled: authState.status != AuthStatus.loading,
+            ),
+            const SizedBox(height: 20),
+            
+            // Password Field
+            _buildTextField(
+              label: 'Mot de passe',
+              controller: _passwordController,
+              icon: Icons.lock_outline,
+              isPassword: true,
+              isPasswordVisible: _isPasswordVisible,
+              enabled: authState.status != AuthStatus.loading,
+              onPasswordToggle: () {
+                setState(() {
+                  _isPasswordVisible = !_isPasswordVisible;
+                });
+              },
+            ),
+            
+            const SizedBox(height: 12),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton(
+                onPressed: authState.status == AuthStatus.loading ? null : () {},
+                child: Text(
+                  'Mot de passe oublié ?',
+                  style: GoogleFonts.inter(
+                    color: Colors.white.withOpacity(0.8),
+                    fontSize: 13,
+                  ),
                 ),
               ),
             ),
+            
+            const SizedBox(height: 24),
+            
+            // Login Button
+            SizedBox(
+              width: double.infinity,
+              height: 54,
+              child: ElevatedButton(
+                onPressed: authState.status == AuthStatus.loading ? null : _handleLogin,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  foregroundColor: const Color(0xFF764BA2),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  elevation: 0,
+                ),
+                child: authState.status == AuthStatus.loading
+                    ? const SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF764BA2)),
+                        ),
+                      )
+                    : Text(
+                        'Se connecter',
+                        style: GoogleFonts.outfit(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+              ),
+            ),
+            
+            const SizedBox(height: 24),
+            
+            // Footer
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Pas encore de compte ?',
+                  style: GoogleFonts.inter(
+                    color: Colors.white.withOpacity(0.7),
+                    fontSize: 14,
+                  ),
+                ),
+                TextButton(
+                  onPressed: authState.status == AuthStatus.loading ? null : () {},
+                  child: Text(
+                    'S\'inscrire',
+                    style: GoogleFonts.inter(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ],
-        ),
-      ],
+        );
+      },
     );
   }
 
@@ -322,6 +363,7 @@ class _LoginPageState extends State<LoginPage> {
     bool isPasswordVisible = false,
     VoidCallback? onPasswordToggle,
     TextInputType? keyboardType,
+    bool enabled = true,
   }) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -339,6 +381,7 @@ class _LoginPageState extends State<LoginPage> {
           controller: controller,
           obscureText: isPassword && !isPasswordVisible,
           keyboardType: keyboardType,
+          enabled: enabled,
           style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
             filled: true,
@@ -351,7 +394,7 @@ class _LoginPageState extends State<LoginPage> {
                     color: Colors.white70,
                     size: 20,
                   ),
-                  onPressed: onPasswordToggle,
+                  onPressed: enabled ? onPasswordToggle : null,
                 )
               : null,
             hintText: 'Entrez votre $label',
