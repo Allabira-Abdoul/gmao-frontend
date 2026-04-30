@@ -48,7 +48,6 @@ class _HomePageState extends State<HomePage> {
                               Icons.ads_click,
                               size: 64,
                               color: Colors.black54,
-                              semanticLabel: 'Empty state icon',
                             ),
                             SizedBox(height: 16),
                             Text(
@@ -72,7 +71,9 @@ class _HomePageState extends State<HomePage> {
                               child: Text(
                                 '${widget.counterState.counterValue}',
                                 key: const ValueKey('counter_text'),
-                                style: Theme.of(context).textTheme.headlineMedium,
+                                style: Theme.of(
+                                  context,
+                                ).textTheme.headlineMedium,
                                 semanticsLabel:
                                     '${widget.counterState.counterValue} presses',
                               ),
