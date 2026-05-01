@@ -9,7 +9,7 @@ class TechnicienDashboard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final user = context.read<AuthState>().currentUser;
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Dashboard Technicien', style: GoogleFonts.outfit()),
@@ -20,16 +20,23 @@ class TechnicienDashboard extends StatelessWidget {
               context.read<AuthState>().logout();
               Navigator.of(context).pushReplacementNamed('/login');
             },
-          )
+          ),
         ],
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.build_circle_outlined, size: 80, color: Colors.blue),
+            const Icon(
+              Icons.build_circle_outlined,
+              size: 80,
+              color: Colors.blue,
+            ),
             const SizedBox(height: 16),
-            Text('Bienvenue, ${user?.email}', style: GoogleFonts.inter(fontSize: 18)),
+            Text(
+              'Bienvenue, ${user?.email}',
+              style: GoogleFonts.inter(fontSize: 18),
+            ),
             const SizedBox(height: 8),
             const Text('Accès Android / Web autorisé'),
           ],

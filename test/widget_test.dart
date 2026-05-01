@@ -1,11 +1,27 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:frontend/main.dart';
+import 'package:frontend/presentation/pages/home_page.dart';
+import 'package:frontend/presentation/state/counter_state.dart';
+import 'package:frontend/application/usecases/get_counter_usecase.dart';
+import 'package:frontend/application/usecases/increment_counter_usecase.dart';
+import 'package:frontend/infrastructure/repositories/in_memory_counter_repository.dart';
 
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    await tester.pumpWidget(const MyApp());
+    // Setup dependencies
+    final counterRepository = InMemoryCounterRepository();
+    final getCounterUseCase = GetCounterUseCase(counterRepository);
+    final incrementCounterUseCase = IncrementCounterUseCase(counterRepository);
+
+    final counterState = CounterState(
+      getCounterUseCase: getCounterUseCase,
+      incrementCounterUseCase: incrementCounterUseCase,
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(home: HomePage(counterState: counterState)),
+    );
     await tester.pumpAndSettle();
 
     expect(find.text('Push the button to start counting!'), findsOneWidget);
