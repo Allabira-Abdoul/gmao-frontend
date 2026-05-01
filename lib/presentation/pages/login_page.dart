@@ -18,7 +18,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _handleLogin() async {
     final authState = context.read<AuthState>();
-    
+
     await authState.login(
       _emailController.text.trim(),
       _passwordController.text,
@@ -62,7 +62,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
           ),
-          
+
           // Animated Background Circles (Subtle)
           Positioned(
             top: -100,
@@ -96,12 +96,12 @@ class _LoginPageState extends State<LoginPage> {
                   builder: (context, constraints) {
                     // Determine if we are on Desktop/Large Web
                     bool isLargeScreen = constraints.maxWidth > 800;
-                    
+
                     return Container(
                       width: isLargeScreen ? 900 : double.infinity,
                       constraints: const BoxConstraints(maxWidth: 900),
-                      child: isLargeScreen 
-                          ? _buildDesktopLayout() 
+                      child: isLargeScreen
+                          ? _buildDesktopLayout()
                           : _buildMobileLayout(),
                     );
                   },
@@ -118,10 +118,7 @@ class _LoginPageState extends State<LoginPage> {
     return Container(
       width: size,
       height: size,
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
-      ),
+      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
     );
   }
 
@@ -166,12 +163,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
           const SizedBox(width: 24),
           // Right side: Login Form
-          Expanded(
-            flex: 4,
-            child: _buildGlassCard(
-              child: _buildLoginForm(),
-            ),
-          ),
+          Expanded(flex: 4, child: _buildGlassCard(child: _buildLoginForm())),
         ],
       ),
     );
@@ -195,9 +187,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
         const SizedBox(height: 32),
-        _buildGlassCard(
-          child: _buildLoginForm(),
-        ),
+        _buildGlassCard(child: _buildLoginForm()),
       ],
     );
   }
@@ -247,7 +237,7 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
             const SizedBox(height: 32),
-            
+
             // Email Field
             _buildTextField(
               label: 'Email',
@@ -257,7 +247,7 @@ class _LoginPageState extends State<LoginPage> {
               enabled: authState.status != AuthStatus.loading,
             ),
             const SizedBox(height: 20),
-            
+
             // Password Field
             _buildTextField(
               label: 'Mot de passe',
@@ -272,12 +262,14 @@ class _LoginPageState extends State<LoginPage> {
                 });
               },
             ),
-            
+
             const SizedBox(height: 12),
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
-                onPressed: authState.status == AuthStatus.loading ? null : () {},
+                onPressed: authState.status == AuthStatus.loading
+                    ? null
+                    : () {},
                 child: Text(
                   'Mot de passe oublié ?',
                   style: GoogleFonts.inter(
@@ -287,15 +279,17 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Login Button
             SizedBox(
               width: double.infinity,
               height: 54,
               child: ElevatedButton(
-                onPressed: authState.status == AuthStatus.loading ? null : _handleLogin,
+                onPressed: authState.status == AuthStatus.loading
+                    ? null
+                    : _handleLogin,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   foregroundColor: const Color(0xFF764BA2),
@@ -310,7 +304,9 @@ class _LoginPageState extends State<LoginPage> {
                         width: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF764BA2)),
+                          valueColor: AlwaysStoppedAnimation<Color>(
+                            Color(0xFF764BA2),
+                          ),
                         ),
                       )
                     : Text(
@@ -322,9 +318,9 @@ class _LoginPageState extends State<LoginPage> {
                       ),
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Footer
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -337,7 +333,9 @@ class _LoginPageState extends State<LoginPage> {
                   ),
                 ),
                 TextButton(
-                  onPressed: authState.status == AuthStatus.loading ? null : () {},
+                  onPressed: authState.status == AuthStatus.loading
+                      ? null
+                      : () {},
                   child: Text(
                     'S\'inscrire',
                     style: GoogleFonts.inter(
@@ -387,18 +385,23 @@ class _LoginPageState extends State<LoginPage> {
             filled: true,
             fillColor: Colors.white.withOpacity(0.1),
             prefixIcon: Icon(icon, color: Colors.white70, size: 20),
-            suffixIcon: isPassword 
-              ? IconButton(
-                  icon: Icon(
-                    isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                    color: Colors.white70,
-                    size: 20,
-                  ),
-                  onPressed: enabled ? onPasswordToggle : null,
-                )
-              : null,
+            suffixIcon: isPassword
+                ? IconButton(
+                    icon: Icon(
+                      isPasswordVisible
+                          ? Icons.visibility
+                          : Icons.visibility_off,
+                      color: Colors.white70,
+                      size: 20,
+                    ),
+                    onPressed: enabled ? onPasswordToggle : null,
+                  )
+                : null,
             hintText: 'Entrez votre $label',
-            hintStyle: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 14),
+            hintStyle: TextStyle(
+              color: Colors.white.withOpacity(0.4),
+              fontSize: 14,
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
               borderSide: BorderSide.none,
@@ -409,7 +412,10 @@ class _LoginPageState extends State<LoginPage> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: Colors.white.withOpacity(0.3), width: 2),
+              borderSide: BorderSide(
+                color: Colors.white.withOpacity(0.3),
+                width: 2,
+              ),
             ),
           ),
         ),
