@@ -311,6 +311,7 @@ class _LoginPageState extends State<LoginPage> {
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
                           valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF764BA2)),
+                          semanticsLabel: 'Connexion en cours',
                         ),
                       )
                     : Text(
@@ -395,6 +396,7 @@ class _LoginPageState extends State<LoginPage> {
                     size: 20,
                   ),
                   onPressed: enabled ? onPasswordToggle : null,
+                  tooltip: isPasswordVisible ? 'Masquer le mot de passe' : 'Afficher le mot de passe',
                 )
               : null,
             hintText: 'Entrez votre $label',
