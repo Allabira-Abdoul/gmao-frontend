@@ -8,3 +8,7 @@
 ## 2026-04-29 - Live Region for Dynamic Text
 **Learning:** When text changes dynamically in Flutter, screen readers won't automatically announce it. Providing a semantic label to the text doesn't help with dynamic announcements.
 **Action:** Wrap dynamically updating text widgets (like counters or timers) in `Semantics(liveRegion: true)` to ensure screen readers announce the changes automatically.
+
+## 2026-05-03 - Added Tooltip to Password Visibility Toggle
+**Learning:** Icon-only buttons (like a password visibility toggle) can lack semantic meaning for screen reader users if no label or tooltip is provided.
+**Action:** Always ensure icon-only `IconButton` widgets have a dynamic `tooltip` reflecting their current state and action.
