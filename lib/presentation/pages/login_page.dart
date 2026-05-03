@@ -14,7 +14,15 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _isPasswordVisible = false;
+  final _isPasswordVisible = ValueNotifier<bool>(false);
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    _isPasswordVisible.dispose();
+    super.dispose();
+  }
 
   Future<void> _handleLogin() async {
     final authState = context.read<AuthState>();
@@ -259,17 +267,23 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 20),
             
             // Password Field
-            _buildTextField(
-              label: 'Mot de passe',
-              controller: _passwordController,
-              icon: Icons.lock_outline,
-              isPassword: true,
-              isPasswordVisible: _isPasswordVisible,
-              enabled: authState.status != AuthStatus.loading,
-              onPasswordToggle: () {
-                setState(() {
-                  _isPasswordVisible = !_isPasswordVisible;
-                });
+            // ⚡ Bolt Optimization: Use ValueListenableBuilder instead of setState
+            // to localize rebuilds to just the password field and prevent
+            // full page re-renders (including expensive BackdropFilters).
+            ValueListenableBuilder<bool>(
+              valueListenable: _isPasswordVisible,
+              builder: (context, isVisible, child) {
+                return _buildTextField(
+                  label: 'Mot de passe',
+                  controller: _passwordController,
+                  icon: Icons.lock_outline,
+                  isPassword: true,
+                  isPasswordVisible: isVisible,
+                  enabled: authState.status != AuthStatus.loading,
+                  onPasswordToggle: () {
+                    _isPasswordVisible.value = !_isPasswordVisible.value;
+                  },
+                );
               },
             ),
             
