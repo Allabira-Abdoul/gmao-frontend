@@ -16,20 +16,28 @@ class ManagerDashboard extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
+            tooltip: 'Déconnexion',
             onPressed: () {
               context.read<AuthState>().logout();
               Navigator.of(context).pushReplacementNamed('/login');
             },
-          )
+          ),
         ],
       ),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.assessment_outlined, size: 80, color: Colors.orange),
+            const Icon(
+              Icons.assessment_outlined,
+              size: 80,
+              color: Colors.orange,
+            ),
             const SizedBox(height: 16),
-            Text('Bienvenue, ${user?.email}', style: GoogleFonts.inter(fontSize: 18)),
+            Text(
+              'Bienvenue, ${user?.email}',
+              style: GoogleFonts.inter(fontSize: 18),
+            ),
             const SizedBox(height: 8),
             const Text('Accès Windows / Web autorisé'),
           ],
