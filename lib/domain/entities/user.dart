@@ -1,12 +1,41 @@
+class Role {
+  final String id;
+  final String libelle;
+  final String description;
+  final List<String> privileges;
+
+  Role({
+    required this.id,
+    required this.libelle,
+    required this.description,
+    required this.privileges,
+  });
+
+  factory Role.fromMap(Map<String, dynamic> map) {
+    return Role(
+      id: map['id_role'] ?? '',
+      libelle: map['libelle'] ?? '',
+      description: map['description'] ?? '',
+      privileges: List<String>.from(map['privileges'] ?? []),
+    );
+  }
+}
+
 class User {
   final String id;
+  final String nomComplet;
   final String email;
+  final String statutCompte;
+  final String idRole;
   final String role;
   final List<String> privileges;
 
   User({
     required this.id,
+    required this.nomComplet,
     required this.email,
+    required this.statutCompte,
+    required this.idRole,
     required this.role,
     required this.privileges,
   });
@@ -26,7 +55,10 @@ class User {
 
     return User(
       id: map['id_utilisateur'] ?? map['user_id'] ?? '',
+      nomComplet: map['nom_complet'] ?? '',
       email: map['email'] ?? '',
+      statutCompte: map['statut_compte'] ?? 'ACTIVE',
+      idRole: map['id_role'] ?? '',
       role: roleName,
       privileges: privilegesList,
     );

@@ -40,6 +40,17 @@ class AdminDashboard extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             const Text('Accès Windows / Web autorisé'),
+            const SizedBox(height: 32),
+            ElevatedButton.icon(
+              onPressed: () {
+                Navigator.of(context).pushNamed('/admin/users');
+              },
+              icon: const Icon(Icons.people),
+              label: const Text('Gestion des Utilisateurs'),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+              ),
+            ),
           ],
         ),
       ),

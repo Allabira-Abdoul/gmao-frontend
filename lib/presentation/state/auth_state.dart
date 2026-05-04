@@ -24,6 +24,9 @@ class AuthState extends ChangeNotifier {
   AuthState({required LoginUseCase loginUseCase})
     : _loginUseCase = loginUseCase;
 
+  String? _accessToken;
+  String? get accessToken => _accessToken;
+
   Future<void> checkAuth() async {
     _status = AuthStatus.loading;
     notifyListeners();
@@ -34,6 +37,7 @@ class AuthState extends ChangeNotifier {
         if (!JwtDecoder.isExpired(token)) {
           Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
           _currentUser = User.fromMap(decodedToken);
+          _accessToken = token;
           _status = AuthStatus.authenticated;
           notifyListeners();
           return;
@@ -62,6 +66,7 @@ class AuthState extends ChangeNotifier {
       // Decode user info from JWT
       Map<String, dynamic> decodedToken = JwtDecoder.decode(tokens.accessToken);
       _currentUser = User.fromMap(decodedToken);
+      _accessToken = tokens.accessToken;
 
       _status = AuthStatus.authenticated;
       notifyListeners();
@@ -120,6 +125,7 @@ class AuthState extends ChangeNotifier {
     await _storage.delete(key: 'access_token');
     await _storage.delete(key: 'refresh_token');
     _currentUser = null;
+    _accessToken = null;
     _status = AuthStatus.unauthenticated;
     notifyListeners();
   }
