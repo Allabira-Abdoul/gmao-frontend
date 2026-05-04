@@ -35,6 +35,9 @@ void main() async {
   final incrementCounterUseCase = IncrementCounterUseCase(counterRepository);
   final loginUseCase = LoginUseCase(authRepository);
 
+  final authState = AuthState(loginUseCase: loginUseCase);
+  await authState.checkAuth();
+
   runApp(
     MultiProvider(
       providers: [
@@ -44,8 +47,8 @@ void main() async {
             incrementCounterUseCase: incrementCounterUseCase,
           ),
         ),
-        ChangeNotifierProvider(
-          create: (_) => AuthState(loginUseCase: loginUseCase),
+        ChangeNotifierProvider.value(
+          value: authState,
         ),
       ],
       child: const MyApp(),
@@ -59,33 +62,45 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'GMAO Premium',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF764BA2),
-          brightness: Brightness.light,
-        ),
-        textTheme: GoogleFonts.interTextTheme(),
-        useMaterial3: true,
-      ),
-      initialRoute: '/login',
-      routes: {
-        '/login': (context) => const LoginPage(),
-        '/technicien-dashboard': (context) => const AuthGuard(
-          allowedRoles: ['Technicien'],
-          child: TechnicienDashboard(),
-        ),
-        '/manager-dashboard': (context) => const AuthGuard(
-          allowedRoles: ['Manager'],
-          child: ManagerDashboard(),
-        ),
-        '/admin-dashboard': (context) => const AuthGuard(
-          allowedRoles: ['Administrateur'],
-          child: AdminDashboard(),
-        ),
-        '/unauthorized-platform': (context) => const UnauthorizedPlatformPage(),
+    return Consumer<AuthState>(
+      builder: (context, authState, child) {
+        String initialRoute = '/login';
+        if (authState.status == AuthStatus.authenticated) {
+           final redirectPath = authState.getPlatformRedirect();
+           if (redirectPath != null) {
+              initialRoute = redirectPath;
+           }
+        }
+
+        return MaterialApp(
+          title: 'GMAO Premium',
+          debugShowCheckedModeBanner: false,
+          theme: ThemeData(
+            colorScheme: ColorScheme.fromSeed(
+              seedColor: const Color(0xFF764BA2),
+              brightness: Brightness.light,
+            ),
+            textTheme: GoogleFonts.interTextTheme(),
+            useMaterial3: true,
+          ),
+          initialRoute: initialRoute,
+          routes: {
+            '/login': (context) => const LoginPage(),
+            '/technicien-dashboard': (context) => const AuthGuard(
+              allowedRoles: ['Technicien'],
+              child: TechnicienDashboard(),
+            ),
+            '/manager-dashboard': (context) => const AuthGuard(
+              allowedRoles: ['Manager'],
+              child: ManagerDashboard(),
+            ),
+            '/admin-dashboard': (context) => const AuthGuard(
+              allowedRoles: ['Administrateur'],
+              child: AdminDashboard(),
+            ),
+            '/unauthorized-platform': (context) => const UnauthorizedPlatformPage(),
+          },
+        );
       },
     );
   }

@@ -2,7 +2,7 @@ import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/application/usecases/login_usecase.dart';
 import 'package:frontend/domain/entities/user.dart';
 
@@ -10,6 +10,7 @@ enum AuthStatus { initial, loading, authenticated, unauthenticated, error }
 
 class AuthState extends ChangeNotifier {
   final LoginUseCase _loginUseCase;
+  final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   AuthStatus _status = AuthStatus.initial;
   AuthStatus get status => _status;
@@ -23,6 +24,29 @@ class AuthState extends ChangeNotifier {
   AuthState({required LoginUseCase loginUseCase})
     : _loginUseCase = loginUseCase;
 
+  Future<void> checkAuth() async {
+    _status = AuthStatus.loading;
+    notifyListeners();
+
+    try {
+      final token = await _storage.read(key: 'access_token');
+      if (token != null) {
+        if (!JwtDecoder.isExpired(token)) {
+          Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
+          _currentUser = User.fromMap(decodedToken);
+          _status = AuthStatus.authenticated;
+          notifyListeners();
+          return;
+        }
+      }
+      _status = AuthStatus.unauthenticated;
+      notifyListeners();
+    } catch (e) {
+      _status = AuthStatus.unauthenticated;
+      notifyListeners();
+    }
+  }
+
   Future<void> login(String email, String password) async {
     _status = AuthStatus.loading;
     _errorMessage = null;
@@ -31,10 +55,9 @@ class AuthState extends ChangeNotifier {
     try {
       final tokens = await _loginUseCase.execute(email, password);
 
-      // Persist tokens
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('access_token', tokens.accessToken);
-      await prefs.setString('refresh_token', tokens.refreshToken);
+      // Persist tokens securely
+      await _storage.write(key: 'access_token', value: tokens.accessToken);
+      await _storage.write(key: 'refresh_token', value: tokens.refreshToken);
 
       // Decode user info from JWT
       Map<String, dynamic> decodedToken = JwtDecoder.decode(tokens.accessToken);
@@ -94,9 +117,8 @@ class AuthState extends ChangeNotifier {
   }
 
   Future<void> logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('access_token');
-    await prefs.remove('refresh_token');
+    await _storage.delete(key: 'access_token');
+    await _storage.delete(key: 'refresh_token');
     _currentUser = null;
     _status = AuthStatus.unauthenticated;
     notifyListeners();
