@@ -7,9 +7,14 @@ class HttpAuthRepository implements AuthRepository {
   final String baseUrl =
       'http://ec2-34-254-90-255.eu-west-1.compute.amazonaws.com/api/authentication';
 
+  // ⚡ Bolt Optimization: Use a persistent http.Client to enable connection pooling.
+  // This avoids establishing a new TCP connection (and DNS resolution) for every API call,
+  // reducing latency and resource overhead.
+  final http.Client _client = http.Client();
+
   @override
   Future<AuthToken> login(String email, String password) async {
-    final response = await http.post(
+    final response = await _client.post(
       Uri.parse('$baseUrl/auth/login'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'email': email, 'mot_de_passe': password}),
@@ -30,7 +35,7 @@ class HttpAuthRepository implements AuthRepository {
 
   @override
   Future<void> logout(String refreshToken) async {
-    await http.post(
+    await _client.post(
       Uri.parse('$baseUrl/auth/logout'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'refresh_token': refreshToken}),
@@ -39,7 +44,7 @@ class HttpAuthRepository implements AuthRepository {
 
   @override
   Future<AuthToken> refreshToken(String refreshToken) async {
-    final response = await http.post(
+    final response = await _client.post(
       Uri.parse('$baseUrl/auth/refresh'),
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({'refresh_token': refreshToken}),
