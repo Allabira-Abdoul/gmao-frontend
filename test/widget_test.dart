@@ -69,6 +69,7 @@ void main() {
     );
     await tester.pumpAndSettle();
 
+    expect(find.byType(TextField), findsWidgets);
     expect(find.text('GMAO Premium'), findsWidgets);
     expect(find.text('Se connecter'), findsWidgets);
     expect(find.text('Connexion'), findsOneWidget);
