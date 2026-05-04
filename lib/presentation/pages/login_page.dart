@@ -14,7 +14,20 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _isPasswordVisible = false;
+
+  // ⚡ Bolt Optimization: Use ValueNotifier instead of setState to prevent
+  // rebuilding the entire page (including expensive backdrop filters)
+  // just to toggle password visibility.
+  final ValueNotifier<bool> _isPasswordVisible = ValueNotifier<bool>(false);
+
+  @override
+  void dispose() {
+    // ⚡ Bolt Optimization: Dispose controllers and notifiers to prevent memory leaks.
+    _emailController.dispose();
+    _passwordController.dispose();
+    _isPasswordVisible.dispose();
+    super.dispose();
+  }
 
   Future<void> _handleLogin() async {
     final authState = context.read<AuthState>();
@@ -249,17 +262,20 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 20),
 
             // Password Field
-            _buildTextField(
-              label: 'Mot de passe',
-              controller: _passwordController,
-              icon: Icons.lock_outline,
-              isPassword: true,
-              isPasswordVisible: _isPasswordVisible,
-              enabled: authState.status != AuthStatus.loading,
-              onPasswordToggle: () {
-                setState(() {
-                  _isPasswordVisible = !_isPasswordVisible;
-                });
+            ValueListenableBuilder<bool>(
+              valueListenable: _isPasswordVisible,
+              builder: (context, isVisible, child) {
+                return _buildTextField(
+                  label: 'Mot de passe',
+                  controller: _passwordController,
+                  icon: Icons.lock_outline,
+                  isPassword: true,
+                  isPasswordVisible: isVisible,
+                  enabled: authState.status != AuthStatus.loading,
+                  onPasswordToggle: () {
+                    _isPasswordVisible.value = !_isPasswordVisible.value;
+                  },
+                );
               },
             ),
 
@@ -394,6 +410,9 @@ class _LoginPageState extends State<LoginPage> {
                       color: Colors.white70,
                       size: 20,
                     ),
+                    tooltip: isPasswordVisible
+                        ? 'Masquer le mot de passe'
+                        : 'Afficher le mot de passe',
                     onPressed: enabled ? onPasswordToggle : null,
                   )
                 : null,
