@@ -15,6 +15,13 @@ class ManagerDashboard extends StatelessWidget {
         title: Text('Dashboard Manager', style: GoogleFonts.outfit()),
         actions: [
           IconButton(
+            icon: const Icon(Icons.person),
+            tooltip: 'Mon Profil',
+            onPressed: () {
+              Navigator.of(context).pushNamed('/profile');
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.logout),
             tooltip: 'Déconnexion',
             onPressed: () {

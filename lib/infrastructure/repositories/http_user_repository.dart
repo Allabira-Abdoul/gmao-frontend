@@ -8,6 +8,24 @@ class HttpUserRepository implements UserRepository {
   final http.Client _client = http.Client();
 
   @override
+  Future<User> getCurrentUser(String token) async {
+    final response = await _client.get(
+      Uri.parse('$baseUrl/users/me'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final responseData = jsonDecode(response.body);
+      return User.fromMap(responseData['data']);
+    } else {
+      throw Exception('Failed to load current user: ${response.body}');
+    }
+  }
+
+  @override
   Future<List<User>> getUsers(String token) async {
     final response = await _client.get(
       Uri.parse('$baseUrl/users?per_page=100'), // Fetch more users for simple table

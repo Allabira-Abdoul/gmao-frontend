@@ -2,6 +2,12 @@ import 'package:frontend/domain/entities/user.dart';
 import 'package:frontend/domain/repositories/role_repository.dart';
 import 'package:frontend/domain/repositories/user_repository.dart';
 
+class GetCurrentUserUseCase {
+  final UserRepository repository;
+  GetCurrentUserUseCase(this.repository);
+  Future<User> execute(String token) => repository.getCurrentUser(token);
+}
+
 class GetUsersUseCase {
   final UserRepository repository;
   GetUsersUseCase(this.repository);

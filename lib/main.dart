@@ -24,6 +24,7 @@ import 'package:frontend/presentation/pages/manager_dashboard.dart';
 import 'package:frontend/presentation/pages/admin_dashboard.dart';
 import 'package:frontend/presentation/pages/unauthorized_platform_page.dart';
 import 'package:frontend/presentation/pages/user_management_page.dart';
+import 'package:frontend/presentation/pages/profile_page.dart';
 import 'package:frontend/presentation/widgets/auth_guard.dart';
 
 void main() async {
@@ -61,6 +62,9 @@ void main() async {
         ),
         ChangeNotifierProvider.value(
           value: authState,
+        ),
+        Provider.value(
+          value: GetCurrentUserUseCase(userRepository),
         ),
         ChangeNotifierProvider(
           create: (_) => UserManagementState(
@@ -108,6 +112,7 @@ class MyApp extends StatelessWidget {
           initialRoute: initialRoute,
           routes: {
             '/login': (context) => const LoginPage(),
+            '/profile': (context) => const ProfilePage(),
             '/technicien-dashboard': (context) => const AuthGuard(
               allowedRoles: ['Technicien'],
               child: TechnicienDashboard(),
