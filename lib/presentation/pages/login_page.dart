@@ -326,14 +326,8 @@ class _LoginPageState extends State<LoginPage> {
                         width: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-<<<<<<< sentinel-auth-guard-16677451656422747240
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            Color(0xFF764BA2),
-                          ),
-=======
                           valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF764BA2)),
                           semanticsLabel: 'Connexion en cours',
->>>>>>> main
                         ),
                       )
                     : Text(
@@ -412,23 +406,6 @@ class _LoginPageState extends State<LoginPage> {
             filled: true,
             fillColor: Colors.white.withValues(alpha: 0.1),
             prefixIcon: Icon(icon, color: Colors.white70, size: 20),
-<<<<<<< sentinel-auth-guard-16677451656422747240
-            suffixIcon: isPassword
-                ? IconButton(
-                    icon: Icon(
-                      isPasswordVisible
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                      color: Colors.white70,
-                      size: 20,
-                    ),
-                    onPressed: enabled ? onPasswordToggle : null,
-                  )
-                : null,
-            hintText: 'Entrez votre $label',
-            hintStyle: TextStyle(
-              color: Colors.white.withOpacity(0.4),
-=======
             suffixIcon: isPassword 
               ? IconButton(
                   icon: Icon(
@@ -443,7 +420,6 @@ class _LoginPageState extends State<LoginPage> {
             hintText: 'Entrez votre $label',
             hintStyle: TextStyle(
               color: Colors.white.withValues(alpha: 0.4),
->>>>>>> main
               fontSize: 14,
             ),
             border: OutlineInputBorder(
@@ -459,11 +435,7 @@ class _LoginPageState extends State<LoginPage> {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
               borderSide: BorderSide(
-<<<<<<< sentinel-auth-guard-16677451656422747240
-                color: Colors.white.withOpacity(0.3),
-=======
                 color: Colors.white.withValues(alpha: 0.3),
->>>>>>> main
                 width: 2,
               ),
             ),
