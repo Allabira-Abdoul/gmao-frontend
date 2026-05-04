@@ -14,16 +14,18 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final ValueNotifier<bool> _isPasswordVisibleNotifier = ValueNotifier<bool>(
-    false,
-  );
+
+  // ⚡ Bolt Optimization: Use ValueNotifier instead of setState to prevent
+  // rebuilding the entire page (including expensive backdrop filters)
+  // just to toggle password visibility.
+  final ValueNotifier<bool> _isPasswordVisible = ValueNotifier<bool>(false);
 
   @override
   void dispose() {
-    // ⚡ Bolt Optimization: Dispose controllers and notifiers to prevent memory leaks
+    // ⚡ Bolt Optimization: Dispose controllers and notifiers to prevent memory leaks.
     _emailController.dispose();
     _passwordController.dispose();
-    _isPasswordVisibleNotifier.dispose();
+    _isPasswordVisible.dispose();
     super.dispose();
   }
 
@@ -266,11 +268,8 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 20),
 
             // Password Field
-            // ⚡ Bolt Optimization: Use ValueListenableBuilder instead of setState
-            // to avoid rebuilding expensive widgets like BackdropFilter and TweenAnimationBuilder
-            // when only the password visibility icon needs to update.
             ValueListenableBuilder<bool>(
-              valueListenable: _isPasswordVisibleNotifier,
+              valueListenable: _isPasswordVisible,
               builder: (context, isVisible, child) {
                 return _buildTextField(
                   label: 'Mot de passe',
@@ -280,8 +279,7 @@ class _LoginPageState extends State<LoginPage> {
                   isPasswordVisible: isVisible,
                   enabled: authState.status != AuthStatus.loading,
                   onPasswordToggle: () {
-                    _isPasswordVisibleNotifier.value =
-                        !_isPasswordVisibleNotifier.value;
+                    _isPasswordVisible.value = !_isPasswordVisible.value;
                   },
                 );
               },
@@ -418,12 +416,15 @@ class _LoginPageState extends State<LoginPage> {
                       color: Colors.white70,
                       size: 20,
                     ),
+                    tooltip: isPasswordVisible
+                        ? 'Masquer le mot de passe'
+                        : 'Afficher le mot de passe',
                     onPressed: enabled ? onPasswordToggle : null,
                   )
                 : null,
             hintText: 'Entrez votre $label',
             hintStyle: TextStyle(
-              color: Colors.white.withValues(alpha: 0.4),
+              color: Colors.white.withOpacity(0.4),
               fontSize: 14,
             ),
             border: OutlineInputBorder(
@@ -439,7 +440,7 @@ class _LoginPageState extends State<LoginPage> {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
               borderSide: BorderSide(
-                color: Colors.white.withValues(alpha: 0.3),
+                color: Colors.white.withOpacity(0.3),
                 width: 2,
               ),
             ),
