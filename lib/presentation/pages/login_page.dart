@@ -14,10 +14,15 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _isPasswordVisible = ValueNotifier<bool>(false);
+
+  // ⚡ Bolt Optimization: Use ValueNotifier instead of setState to prevent
+  // rebuilding the entire page (including expensive backdrop filters)
+  // just to toggle password visibility.
+  final ValueNotifier<bool> _isPasswordVisible = ValueNotifier<bool>(false);
 
   @override
   void dispose() {
+    // ⚡ Bolt Optimization: Dispose controllers and notifiers to prevent memory leaks.
     _emailController.dispose();
     _passwordController.dispose();
     _isPasswordVisible.dispose();
@@ -26,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
 
   Future<void> _handleLogin() async {
     final authState = context.read<AuthState>();
-    
+
     await authState.login(
       _emailController.text.trim(),
       _passwordController.text,
@@ -70,17 +75,23 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
           ),
-          
+
           // Animated Background Circles (Subtle)
           Positioned(
             top: -100,
             right: -100,
-            child: _buildBackgroundCircle(300, Colors.white.withOpacity(0.1)),
+            child: _buildBackgroundCircle(
+              300,
+              Colors.white.withValues(alpha: 0.1),
+            ),
           ),
           Positioned(
             bottom: -50,
             left: -50,
-            child: _buildBackgroundCircle(200, Colors.white.withOpacity(0.1)),
+            child: _buildBackgroundCircle(
+              200,
+              Colors.white.withValues(alpha: 0.1),
+            ),
           ),
 
           // Main Content
@@ -104,12 +115,12 @@ class _LoginPageState extends State<LoginPage> {
                   builder: (context, constraints) {
                     // Determine if we are on Desktop/Large Web
                     bool isLargeScreen = constraints.maxWidth > 800;
-                    
+
                     return Container(
                       width: isLargeScreen ? 900 : double.infinity,
                       constraints: const BoxConstraints(maxWidth: 900),
-                      child: isLargeScreen 
-                          ? _buildDesktopLayout() 
+                      child: isLargeScreen
+                          ? _buildDesktopLayout()
                           : _buildMobileLayout(),
                     );
                   },
@@ -126,10 +137,7 @@ class _LoginPageState extends State<LoginPage> {
     return Container(
       width: size,
       height: size,
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
-      ),
+      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
     );
   }
 
@@ -165,7 +173,7 @@ class _LoginPageState extends State<LoginPage> {
                     textAlign: TextAlign.center,
                     style: GoogleFonts.inter(
                       fontSize: 16,
-                      color: Colors.white.withOpacity(0.8),
+                      color: Colors.white.withValues(alpha: 0.8),
                     ),
                   ),
                 ],
@@ -174,12 +182,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
           const SizedBox(width: 24),
           // Right side: Login Form
-          Expanded(
-            flex: 4,
-            child: _buildGlassCard(
-              child: _buildLoginForm(),
-            ),
-          ),
+          Expanded(flex: 4, child: _buildGlassCard(child: _buildLoginForm())),
         ],
       ),
     );
@@ -203,9 +206,7 @@ class _LoginPageState extends State<LoginPage> {
           ),
         ),
         const SizedBox(height: 32),
-        _buildGlassCard(
-          child: _buildLoginForm(),
-        ),
+        _buildGlassCard(child: _buildLoginForm()),
       ],
     );
   }
@@ -218,10 +219,10 @@ class _LoginPageState extends State<LoginPage> {
         child: Container(
           padding: const EdgeInsets.all(32),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.15),
+            color: Colors.white.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(24),
             border: Border.all(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               width: 1.5,
             ),
           ),
@@ -251,11 +252,11 @@ class _LoginPageState extends State<LoginPage> {
               'Heureux de vous revoir !',
               style: GoogleFonts.inter(
                 fontSize: 14,
-                color: Colors.white.withOpacity(0.7),
+                color: Colors.white.withValues(alpha: 0.7),
               ),
             ),
             const SizedBox(height: 32),
-            
+
             // Email Field
             _buildTextField(
               label: 'Email',
@@ -265,11 +266,8 @@ class _LoginPageState extends State<LoginPage> {
               enabled: authState.status != AuthStatus.loading,
             ),
             const SizedBox(height: 20),
-            
+
             // Password Field
-            // ⚡ Bolt Optimization: Use ValueListenableBuilder instead of setState
-            // to localize rebuilds to just the password field and prevent
-            // full page re-renders (including expensive BackdropFilters).
             ValueListenableBuilder<bool>(
               valueListenable: _isPasswordVisible,
               builder: (context, isVisible, child) {
@@ -286,30 +284,34 @@ class _LoginPageState extends State<LoginPage> {
                 );
               },
             ),
-            
+
             const SizedBox(height: 12),
             Align(
               alignment: Alignment.centerRight,
               child: TextButton(
-                onPressed: authState.status == AuthStatus.loading ? null : () {},
+                onPressed: authState.status == AuthStatus.loading
+                    ? null
+                    : () {},
                 child: Text(
                   'Mot de passe oublié ?',
                   style: GoogleFonts.inter(
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withValues(alpha: 0.8),
                     fontSize: 13,
                   ),
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Login Button
             SizedBox(
               width: double.infinity,
               height: 54,
               child: ElevatedButton(
-                onPressed: authState.status == AuthStatus.loading ? null : _handleLogin,
+                onPressed: authState.status == AuthStatus.loading
+                    ? null
+                    : _handleLogin,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.white,
                   foregroundColor: const Color(0xFF764BA2),
@@ -325,6 +327,7 @@ class _LoginPageState extends State<LoginPage> {
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
                           valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF764BA2)),
+                          semanticsLabel: 'Connexion en cours',
                         ),
                       )
                     : Text(
@@ -336,9 +339,9 @@ class _LoginPageState extends State<LoginPage> {
                       ),
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // Footer
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -346,12 +349,14 @@ class _LoginPageState extends State<LoginPage> {
                 Text(
                   'Pas encore de compte ?',
                   style: GoogleFonts.inter(
-                    color: Colors.white.withOpacity(0.7),
+                    color: Colors.white.withValues(alpha: 0.7),
                     fontSize: 14,
                   ),
                 ),
                 TextButton(
-                  onPressed: authState.status == AuthStatus.loading ? null : () {},
+                  onPressed: authState.status == AuthStatus.loading
+                      ? null
+                      : () {},
                   child: Text(
                     'S\'inscrire',
                     style: GoogleFonts.inter(
@@ -385,7 +390,7 @@ class _LoginPageState extends State<LoginPage> {
         Text(
           label,
           style: GoogleFonts.inter(
-            color: Colors.white.withOpacity(0.9),
+            color: Colors.white.withValues(alpha: 0.9),
             fontSize: 13,
             fontWeight: FontWeight.w500,
           ),
@@ -399,7 +404,7 @@ class _LoginPageState extends State<LoginPage> {
           style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
             filled: true,
-            fillColor: Colors.white.withOpacity(0.1),
+            fillColor: Colors.white.withValues(alpha: 0.1),
             prefixIcon: Icon(icon, color: Colors.white70, size: 20),
             suffixIcon: isPassword 
               ? IconButton(
@@ -409,21 +414,30 @@ class _LoginPageState extends State<LoginPage> {
                     size: 20,
                   ),
                   onPressed: enabled ? onPasswordToggle : null,
+                  tooltip: isPasswordVisible ? 'Masquer le mot de passe' : 'Afficher le mot de passe',
                 )
               : null,
             hintText: 'Entrez votre $label',
-            hintStyle: TextStyle(color: Colors.white.withOpacity(0.4), fontSize: 14),
+            hintStyle: TextStyle(
+              color: Colors.white.withOpacity(0.4),
+              fontSize: 14,
+            ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
               borderSide: BorderSide.none,
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+              borderSide: BorderSide(
+                color: Colors.white.withValues(alpha: 0.1),
+              ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: Colors.white.withOpacity(0.3), width: 2),
+              borderSide: BorderSide(
+                color: Colors.white.withOpacity(0.3),
+                width: 2,
+              ),
             ),
           ),
         ),

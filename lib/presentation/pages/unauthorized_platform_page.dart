@@ -20,7 +20,10 @@ class UnauthorizedPlatformPage extends StatelessWidget {
               Text(
                 'Accès non autorisé sur cette plateforme',
                 textAlign: TextAlign.center,
-                style: GoogleFonts.outfit(fontSize: 24, fontWeight: FontWeight.bold),
+                style: GoogleFonts.outfit(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
               const SizedBox(height: 16),
               Text(

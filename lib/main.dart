@@ -23,7 +23,7 @@ import 'package:frontend/presentation/pages/unauthorized_platform_page.dart';
 void main() async {
   // Initialize Flutter first to allow us to run context.read
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Infrastructure
   final counterRepository = InMemoryCounterRepository();
   final authRepository = HttpAuthRepository();
@@ -54,6 +54,29 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
+  Widget _protectedRoute(Widget child, List<String> allowedRoles) {
+    return Consumer<AuthState>(
+      builder: (context, authState, _) {
+        if (authState.status != AuthStatus.authenticated ||
+            authState.currentUser == null) {
+          // Future microtask to avoid navigating during build phase
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            Navigator.of(context).pushReplacementNamed('/login');
+          });
+          return const Scaffold(
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
+
+        if (!allowedRoles.contains(authState.currentUser!.role)) {
+          return const UnauthorizedPlatformPage();
+        }
+
+        return child;
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -70,9 +93,12 @@ class MyApp extends StatelessWidget {
       initialRoute: '/login',
       routes: {
         '/login': (context) => const LoginPage(),
-        '/technicien-dashboard': (context) => const TechnicienDashboard(),
-        '/manager-dashboard': (context) => const ManagerDashboard(),
-        '/admin-dashboard': (context) => const AdminDashboard(),
+        '/technicien-dashboard': (context) =>
+            _protectedRoute(const TechnicienDashboard(), ['Technicien']),
+        '/manager-dashboard': (context) =>
+            _protectedRoute(const ManagerDashboard(), ['Manager']),
+        '/admin-dashboard': (context) =>
+            _protectedRoute(const AdminDashboard(), ['Administrateur']),
         '/unauthorized-platform': (context) => const UnauthorizedPlatformPage(),
       },
     );
