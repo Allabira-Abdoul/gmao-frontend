@@ -24,7 +24,7 @@ import 'package:frontend/presentation/widgets/auth_guard.dart';
 void main() async {
   // Initialize Flutter first to allow us to run context.read
   WidgetsFlutterBinding.ensureInitialized();
-
+//
   // Infrastructure
   final counterRepository = InMemoryCounterRepository();
   final authRepository = HttpAuthRepository();
