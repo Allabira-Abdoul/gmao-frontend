@@ -80,12 +80,18 @@ class _LoginPageState extends State<LoginPage> {
           Positioned(
             top: -100,
             right: -100,
-            child: _buildBackgroundCircle(300, Colors.white.withOpacity(0.1)),
+            child: _buildBackgroundCircle(
+              300,
+              Colors.white.withValues(alpha: 0.1),
+            ),
           ),
           Positioned(
             bottom: -50,
             left: -50,
-            child: _buildBackgroundCircle(200, Colors.white.withOpacity(0.1)),
+            child: _buildBackgroundCircle(
+              200,
+              Colors.white.withValues(alpha: 0.1),
+            ),
           ),
 
           // Main Content
@@ -167,7 +173,7 @@ class _LoginPageState extends State<LoginPage> {
                     textAlign: TextAlign.center,
                     style: GoogleFonts.inter(
                       fontSize: 16,
-                      color: Colors.white.withOpacity(0.8),
+                      color: Colors.white.withValues(alpha: 0.8),
                     ),
                   ),
                 ],
@@ -213,10 +219,10 @@ class _LoginPageState extends State<LoginPage> {
         child: Container(
           padding: const EdgeInsets.all(32),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.15),
+            color: Colors.white.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(24),
             border: Border.all(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               width: 1.5,
             ),
           ),
@@ -246,7 +252,7 @@ class _LoginPageState extends State<LoginPage> {
               'Heureux de vous revoir !',
               style: GoogleFonts.inter(
                 fontSize: 14,
-                color: Colors.white.withOpacity(0.7),
+                color: Colors.white.withValues(alpha: 0.7),
               ),
             ),
             const SizedBox(height: 32),
@@ -289,7 +295,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: Text(
                   'Mot de passe oublié ?',
                   style: GoogleFonts.inter(
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withValues(alpha: 0.8),
                     fontSize: 13,
                   ),
                 ),
@@ -344,7 +350,7 @@ class _LoginPageState extends State<LoginPage> {
                 Text(
                   'Pas encore de compte ?',
                   style: GoogleFonts.inter(
-                    color: Colors.white.withOpacity(0.7),
+                    color: Colors.white.withValues(alpha: 0.7),
                     fontSize: 14,
                   ),
                 ),
@@ -385,7 +391,7 @@ class _LoginPageState extends State<LoginPage> {
         Text(
           label,
           style: GoogleFonts.inter(
-            color: Colors.white.withOpacity(0.9),
+            color: Colors.white.withValues(alpha: 0.9),
             fontSize: 13,
             fontWeight: FontWeight.w500,
           ),
@@ -399,7 +405,7 @@ class _LoginPageState extends State<LoginPage> {
           style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
             filled: true,
-            fillColor: Colors.white.withOpacity(0.1),
+            fillColor: Colors.white.withValues(alpha: 0.1),
             prefixIcon: Icon(icon, color: Colors.white70, size: 20),
             suffixIcon: isPassword
                 ? IconButton(
@@ -427,7 +433,9 @@ class _LoginPageState extends State<LoginPage> {
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+              borderSide: BorderSide(
+                color: Colors.white.withValues(alpha: 0.1),
+              ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
