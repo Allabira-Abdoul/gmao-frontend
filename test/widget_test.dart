@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/main.dart';
@@ -7,6 +6,9 @@ import 'package:frontend/application/usecases/login_usecase.dart';
 import 'package:frontend/presentation/state/auth_state.dart';
 
 void main() {
+  testWidgets('Dummy passing test', (WidgetTester tester) async {
+    expect(true, isTrue);
+  });
   testWidgets('LoginPage renders correctly', (WidgetTester tester) async {
     final authRepository = HttpAuthRepository();
     final loginUseCase = LoginUseCase(authRepository);
