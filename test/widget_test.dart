@@ -26,7 +26,8 @@ void main() {
             incrementCounterUseCase: incrementCounterUseCase,
           ),
           child: Consumer<CounterState>(
-            builder: (context, counterState, _) => HomePage(counterState: counterState),
+            builder: (context, counterState, _) =>
+                HomePage(counterState: counterState),
           ),
         ),
       ),
@@ -47,7 +48,7 @@ void main() {
 
     final getCounterUseCase = GetCounterUseCase(counterRepository);
     final incrementCounterUseCase = IncrementCounterUseCase(counterRepository);
-    
+
     await tester.pumpWidget(
       MultiProvider(
         providers: [

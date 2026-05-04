@@ -24,7 +24,7 @@ import 'package:frontend/presentation/widgets/auth_guard.dart';
 void main() async {
   // Initialize Flutter first to allow us to run context.read
   WidgetsFlutterBinding.ensureInitialized();
-//
+  //
   // Infrastructure
   final counterRepository = InMemoryCounterRepository();
   final authRepository = HttpAuthRepository();
@@ -55,7 +55,6 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -73,17 +72,15 @@ class MyApp extends StatelessWidget {
       routes: {
         '/login': (context) => const LoginPage(),
         '/technicien-dashboard': (context) => const AuthGuard(
-              requiredRole: 'Technicien',
-              child: TechnicienDashboard(),
-            ),
-        '/manager-dashboard': (context) => const AuthGuard(
-              requiredRole: 'Manager',
-              child: ManagerDashboard(),
-            ),
+          requiredRole: 'Technicien',
+          child: TechnicienDashboard(),
+        ),
+        '/manager-dashboard': (context) =>
+            const AuthGuard(requiredRole: 'Manager', child: ManagerDashboard()),
         '/admin-dashboard': (context) => const AuthGuard(
-              requiredRole: 'Administrateur',
-              child: AdminDashboard(),
-            ),
+          requiredRole: 'Administrateur',
+          child: AdminDashboard(),
+        ),
         '/unauthorized-platform': (context) => const UnauthorizedPlatformPage(),
       },
     );

@@ -18,3 +18,6 @@
 ## 2024-05-01 - Tooltips for icon-only buttons
 **Learning:** Found multiple icon-only `IconButton`s (password visibility toggle, dashboard logout buttons) lacking tooltips. This is a common accessibility issue for screen readers and missing context for mouse hover users.
 **Action:** Always add `tooltip` properties to `IconButton`s containing only an icon, ensuring the text is correctly localized for the user interface context (e.g., 'Déconnexion' instead of 'Logout' for a French UI).
+## 2024-05-19 - Keyboard Submission and Autofill in Login Forms
+**Learning:** Found that the login form lacked explicit keyboard submission and autofill hints, which makes it harder to use on Desktop/Web where users expect to hit 'Enter' to submit, and also prevents password managers from seamlessly autofilling credentials.
+**Action:** Always include `TextInputAction`, `onSubmitted`, and `autofillHints` (with an `AutofillGroup`) on login forms. This significantly improves keyboard accessibility and general UX by matching native platform behaviors and supporting password managers.
