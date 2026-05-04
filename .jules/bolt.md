@@ -13,3 +13,6 @@
 ## 2024-05-24 - [Flutter Localized Rebuilds & Resource Management]
 **Learning:** Using `setState()` at the root level of a page to toggle simple UI states (like password visibility) triggers expensive rebuilds of complex descendant widgets such as `BackdropFilter` and `TweenAnimationBuilder`. Additionally, failing to dispose `TextEditingController`s and `ValueNotifier`s creates memory leaks.
 **Action:** Use `ValueNotifier` and `ValueListenableBuilder` to isolate rebuilds strictly to the component that needs it. Always override `dispose()` in `StatefulWidget`s to clean up controllers and notifiers.
+## 2024-05-24 - Dart HTTP Connection Pooling Optimization
+**Learning:** Using the top-level functions (like `http.post()`, `http.get()`) from Dart's `http` package creates and closes a new `http.Client` (and thus a new TCP connection) for every single request. This introduces significant overhead due to repeated DNS resolutions and TCP/TLS handshakes, especially for sequential API calls.
+**Action:** Always instantiate a persistent `http.Client` (e.g., `final http.Client _client = http.Client();`) within repository or service classes to enable TCP keep-alive and connection pooling across multiple HTTP requests.

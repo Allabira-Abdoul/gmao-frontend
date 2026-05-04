@@ -10,6 +10,12 @@
 **Vulnerability:** Android application backup enabled by default.
 **Learning:** Default Android configurations allow local app data to be backed up (e.g. via `adb backup`). This can lead to local data leakage of sensitive user information, settings, or database content to an attacker with physical access or malicious apps exploiting backup configurations.
 **Prevention:** Explicitly set `android:allowBackup="false"` and `android:fullBackupContent="false"` in the `<application>` tag of `AndroidManifest.xml` to prevent unintentional exposure of app data.
+<<<<<<< sentinel-auth-guard-16677451656422747240
+## 2025-02-09 - Missing Authorization Checks
+**Vulnerability:** Missing authorization route guards in the presentation layer allowing unauthenticated users to access sensitive dashboards.
+**Learning:** Default unauthenticated states should redirect to login, but dashboard routes must strictly verify roles dynamically before mounting.
+**Prevention:** Always implement a dedicated `AuthGuard` widget wrapper for all sensitive routes to verify the user state and roles dynamically at build time before rendering protected views.
+=======
 ## $(date +%Y-%m-%d) - Unprotected Client-Side Routes in Flutter
 **Vulnerability:** Missing authorization checks on sensitive application routes.
 **Learning:** Routes defined directly in the `MaterialApp` routes table without a surrounding guard allow any user, authenticated or not, to bypass expected flows and access sensitive screens by deep-linking or route manipulation.
@@ -18,3 +24,4 @@
 **Vulnerability:** Missing authorization checks on sensitive Flutter routes.
 **Learning:** In a Single Page Application (SPA) architecture like Flutter Web or desktop/mobile, defining routes in `MaterialApp` without wrapping them in an authentication guard allows unauthenticated users to access sensitive pages (like admin dashboards) by directly navigating to the route or if the initial routing logic is bypassed. Even if the API is secure, this can leak UI elements or cached data.
 **Prevention:** Always protect sensitive application routes using a route guard or wrapper widget (e.g., `_protectedRoute`) that verifies both the user's authentication status and role permissions before rendering the route's widget.
+>>>>>>> main
