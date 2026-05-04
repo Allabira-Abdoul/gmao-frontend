@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:frontend/application/usecases/refresh_token_usecase.dart';
 import 'package:frontend/application/usecases/login_usecase.dart';
 import 'package:frontend/domain/entities/user.dart';
 
@@ -10,6 +11,7 @@ enum AuthStatus { initial, loading, authenticated, unauthenticated, error }
 
 class AuthState extends ChangeNotifier {
   final LoginUseCase _loginUseCase;
+  final RefreshTokenUseCase _refreshTokenUseCase;
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
   AuthStatus _status = AuthStatus.initial;
@@ -21,11 +23,36 @@ class AuthState extends ChangeNotifier {
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
-  AuthState({required LoginUseCase loginUseCase})
-    : _loginUseCase = loginUseCase;
+  AuthState({
+    required LoginUseCase loginUseCase,
+    required RefreshTokenUseCase refreshTokenUseCase,
+  })  : _loginUseCase = loginUseCase,
+        _refreshTokenUseCase = refreshTokenUseCase;
 
   String? _accessToken;
   String? get accessToken => _accessToken;
+
+  Future<bool> refreshTokens() async {
+    try {
+      final refreshToken = await _storage.read(key: 'refresh_token');
+      if (refreshToken == null) {
+        await logout();
+        return false;
+      }
+
+      final tokens = await _refreshTokenUseCase.execute(refreshToken);
+      
+      // Update storage and memory
+      await _storage.write(key: 'access_token', value: tokens.accessToken);
+      await _storage.write(key: 'refresh_token', value: tokens.refreshToken);
+      _accessToken = tokens.accessToken;
+      
+      return true;
+    } catch (e) {
+      await logout();
+      return false;
+    }
+  }
 
   Future<void> checkAuth() async {
     _status = AuthStatus.loading;

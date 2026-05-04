@@ -7,6 +7,7 @@ import 'package:frontend/infrastructure/repositories/http_auth_repository.dart';
 import 'package:frontend/application/usecases/get_counter_usecase.dart';
 import 'package:frontend/application/usecases/increment_counter_usecase.dart';
 import 'package:frontend/application/usecases/login_usecase.dart';
+import 'package:frontend/application/usecases/refresh_token_usecase.dart';
 import 'package:frontend/presentation/state/counter_state.dart';
 import 'package:frontend/presentation/state/auth_state.dart';
 import 'package:frontend/main.dart';
@@ -44,6 +45,7 @@ void main() {
   testWidgets('LoginPage renders correctly', (WidgetTester tester) async {
     final authRepository = HttpAuthRepository();
     final loginUseCase = LoginUseCase(authRepository);
+    final refreshTokenUseCase = RefreshTokenUseCase(authRepository);
     final counterRepository = InMemoryCounterRepository();
 
     final getCounterUseCase = GetCounterUseCase(counterRepository);
@@ -59,7 +61,10 @@ void main() {
             ),
           ),
           ChangeNotifierProvider(
-            create: (_) => AuthState(loginUseCase: loginUseCase),
+            create: (_) => AuthState(
+              loginUseCase: loginUseCase,
+              refreshTokenUseCase: refreshTokenUseCase,
+            ),
           ),
         ],
         child: const MyApp(),

@@ -5,7 +5,9 @@ import 'package:frontend/domain/repositories/user_repository.dart';
 
 class HttpUserRepository implements UserRepository {
   final String baseUrl = 'https://ec2-34-254-90-255.eu-west-1.compute.amazonaws.com/api/user';
-  final http.Client _client = http.Client();
+  final http.Client _client;
+
+  HttpUserRepository(this._client);
 
   @override
   Future<User> getCurrentUser(String token) async {

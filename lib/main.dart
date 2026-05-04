@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
+import 'package:http/http.dart' as http;
+import 'package:frontend/infrastructure/http/authenticated_client.dart';
+import 'package:frontend/application/usecases/refresh_token_usecase.dart';
+
 // Infrastructure (Adapters)
 import 'package:frontend/infrastructure/repositories/in_memory_counter_repository.dart';
 import 'package:frontend/infrastructure/repositories/http_auth_repository.dart';
@@ -31,25 +35,36 @@ void main() async {
   // Initialize Flutter first to allow us to run context.read
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Infrastructure
-  final counterRepository = InMemoryCounterRepository();
+  // 1. Auth Infrastructure & Use Cases (doesn't need AuthenticatedClient)
   final authRepository = HttpAuthRepository();
-  final userRepository = HttpUserRepository();
-  final roleRepository = HttpRoleRepository();
+  final loginUseCase = LoginUseCase(authRepository);
+  final refreshTokenUseCase = RefreshTokenUseCase(authRepository);
 
-  // Application
+  // 2. Auth State
+  final authState = AuthState(
+    loginUseCase: loginUseCase, 
+    refreshTokenUseCase: refreshTokenUseCase
+  );
+  await authState.checkAuth();
+
+  // 3. Authenticated Client
+  final innerClient = http.Client();
+  final authenticatedClient = AuthenticatedClient(authState, innerClient);
+
+  // 4. Other Infrastructure
+  final counterRepository = InMemoryCounterRepository();
+  final userRepository = HttpUserRepository(authenticatedClient);
+  final roleRepository = HttpRoleRepository(authenticatedClient);
+
+  // 5. Other Application Use Cases
   final getCounterUseCase = GetCounterUseCase(counterRepository);
   final incrementCounterUseCase = IncrementCounterUseCase(counterRepository);
-  final loginUseCase = LoginUseCase(authRepository);
   
   final getUsersUseCase = GetUsersUseCase(userRepository);
   final createUserUseCase = CreateUserUseCase(userRepository);
   final updateUserUseCase = UpdateUserUseCase(userRepository);
   final deleteUserUseCase = DeleteUserUseCase(userRepository);
   final getRolesUseCase = GetRolesUseCase(roleRepository);
-
-  final authState = AuthState(loginUseCase: loginUseCase);
-  await authState.checkAuth();
 
   runApp(
     MultiProvider(

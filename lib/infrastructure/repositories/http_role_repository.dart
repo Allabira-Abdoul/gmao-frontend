@@ -5,7 +5,9 @@ import 'package:frontend/domain/repositories/role_repository.dart';
 
 class HttpRoleRepository implements RoleRepository {
   final String baseUrl = 'https://ec2-34-254-90-255.eu-west-1.compute.amazonaws.com/api/user';
-  final http.Client _client = http.Client();
+  final http.Client _client;
+
+  HttpRoleRepository(this._client);
 
   @override
   Future<List<Role>> getRoles(String token) async {

@@ -5,13 +5,16 @@ import 'package:provider/provider.dart';
 import 'package:frontend/presentation/pages/login_page.dart';
 import 'package:frontend/presentation/state/auth_state.dart';
 import 'package:frontend/application/usecases/login_usecase.dart';
+import 'package:frontend/application/usecases/refresh_token_usecase.dart';
 import 'package:frontend/infrastructure/repositories/http_auth_repository.dart';
 
 void main() {
   testWidgets('LoginPage password visibility toggle test', (WidgetTester tester) async {
     final authRepository = HttpAuthRepository();
-    final authState = AuthState(loginUseCase: LoginUseCase(authRepository));
-
+    final authState = AuthState(
+      loginUseCase: LoginUseCase(authRepository),
+      refreshTokenUseCase: RefreshTokenUseCase(authRepository),
+    );
     await tester.pumpWidget(
       MaterialApp(
         home: MultiProvider(
