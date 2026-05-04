@@ -6,11 +6,14 @@ import 'package:frontend/domain/repositories/auth_repository.dart';
 class HttpAuthRepository implements AuthRepository {
   final String baseUrl =
       'http://ec2-34-254-90-255.eu-west-1.compute.amazonaws.com/api/authentication';
+<<<<<<< sentinel-auth-guard-16677451656422747240
+=======
 
   // ⚡ Bolt Optimization: Use a persistent http.Client to enable connection pooling.
   // This avoids establishing a new TCP connection (and DNS resolution) for every API call,
   // reducing latency and resource overhead.
   final http.Client _client = http.Client();
+>>>>>>> main
 
   @override
   Future<AuthToken> login(String email, String password) async {
