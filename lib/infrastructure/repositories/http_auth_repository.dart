@@ -4,17 +4,15 @@ import 'package:frontend/domain/entities/user.dart';
 import 'package:frontend/domain/repositories/auth_repository.dart';
 
 class HttpAuthRepository implements AuthRepository {
-  final String baseUrl = 'http://ec2-34-254-90-255.eu-west-1.compute.amazonaws.com/api/authentication';
+  final String baseUrl =
+      'http://ec2-34-254-90-255.eu-west-1.compute.amazonaws.com/api/authentication';
 
   @override
   Future<AuthToken> login(String email, String password) async {
     final response = await http.post(
       Uri.parse('$baseUrl/auth/login'),
       headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'email': email,
-        'mot_de_passe': password,
-      }),
+      body: jsonEncode({'email': email, 'mot_de_passe': password}),
     );
 
     if (response.statusCode == 200) {

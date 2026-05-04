@@ -19,11 +19,12 @@ import 'package:frontend/presentation/pages/technicien_dashboard.dart';
 import 'package:frontend/presentation/pages/manager_dashboard.dart';
 import 'package:frontend/presentation/pages/admin_dashboard.dart';
 import 'package:frontend/presentation/pages/unauthorized_platform_page.dart';
+import 'package:frontend/presentation/widgets/auth_guard.dart';
 
 void main() async {
   // Initialize Flutter first to allow us to run context.read
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Infrastructure
   final counterRepository = InMemoryCounterRepository();
   final authRepository = HttpAuthRepository();
@@ -70,9 +71,18 @@ class MyApp extends StatelessWidget {
       initialRoute: '/login',
       routes: {
         '/login': (context) => const LoginPage(),
-        '/technicien-dashboard': (context) => const TechnicienDashboard(),
-        '/manager-dashboard': (context) => const ManagerDashboard(),
-        '/admin-dashboard': (context) => const AdminDashboard(),
+        '/technicien-dashboard': (context) => const AuthGuard(
+          allowedRoles: ['Technicien'],
+          child: TechnicienDashboard(),
+        ),
+        '/manager-dashboard': (context) => const AuthGuard(
+          allowedRoles: ['Manager'],
+          child: ManagerDashboard(),
+        ),
+        '/admin-dashboard': (context) => const AuthGuard(
+          allowedRoles: ['Administrateur'],
+          child: AdminDashboard(),
+        ),
         '/unauthorized-platform': (context) => const UnauthorizedPlatformPage(),
       },
     );

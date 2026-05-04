@@ -10,3 +10,7 @@
 **Vulnerability:** Android application backup enabled by default.
 **Learning:** Default Android configurations allow local app data to be backed up (e.g. via `adb backup`). This can lead to local data leakage of sensitive user information, settings, or database content to an attacker with physical access or malicious apps exploiting backup configurations.
 **Prevention:** Explicitly set `android:allowBackup="false"` and `android:fullBackupContent="false"` in the `<application>` tag of `AndroidManifest.xml` to prevent unintentional exposure of app data.
+## 2025-02-09 - Missing Authorization Checks
+**Vulnerability:** Missing authorization route guards in the presentation layer allowing unauthenticated users to access sensitive dashboards.
+**Learning:** Default unauthenticated states should redirect to login, but dashboard routes must strictly verify roles dynamically before mounting.
+**Prevention:** Always implement a dedicated `AuthGuard` widget wrapper for all sensitive routes to verify the user state and roles dynamically at build time before rendering protected views.
