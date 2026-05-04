@@ -15,7 +15,7 @@ class User {
     // Handle nested role object from API or flat role string from JWT
     String roleName = '';
     List<String> privilegesList = [];
-    
+
     if (map['role'] is Map) {
       roleName = map['role']['libelle'] ?? '';
       privilegesList = List<String>.from(map['role']['privileges'] ?? []);
@@ -37,8 +37,5 @@ class AuthToken {
   final String accessToken;
   final String refreshToken;
 
-  AuthToken({
-    required this.accessToken,
-    required this.refreshToken,
-  });
+  AuthToken({required this.accessToken, required this.refreshToken});
 }

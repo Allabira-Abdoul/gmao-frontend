@@ -10,17 +10,18 @@ enum AuthStatus { initial, loading, authenticated, unauthenticated, error }
 
 class AuthState extends ChangeNotifier {
   final LoginUseCase _loginUseCase;
-  
+
   AuthStatus _status = AuthStatus.initial;
   AuthStatus get status => _status;
-  
+
   User? _currentUser;
   User? get currentUser => _currentUser;
-  
+
   String? _errorMessage;
   String? get errorMessage => _errorMessage;
 
-  AuthState({required LoginUseCase loginUseCase}) : _loginUseCase = loginUseCase;
+  AuthState({required LoginUseCase loginUseCase})
+    : _loginUseCase = loginUseCase;
 
   Future<void> login(String email, String password) async {
     _status = AuthStatus.loading;
@@ -29,16 +30,16 @@ class AuthState extends ChangeNotifier {
 
     try {
       final tokens = await _loginUseCase.execute(email, password);
-      
+
       // Persist tokens
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('access_token', tokens.accessToken);
       await prefs.setString('refresh_token', tokens.refreshToken);
-      
+
       // Decode user info from JWT
       Map<String, dynamic> decodedToken = JwtDecoder.decode(tokens.accessToken);
       _currentUser = User.fromMap(decodedToken);
-      
+
       _status = AuthStatus.authenticated;
       notifyListeners();
     } catch (e) {
@@ -53,7 +54,8 @@ class AuthState extends ChangeNotifier {
   String? getPlatformRedirect() {
     if (_currentUser == null) return '/login';
 
-    final role = _currentUser!.role; // e.g., "Technicien", "Manager", "Administrateur"
+    final role =
+        _currentUser!.role; // e.g., "Technicien", "Manager", "Administrateur"
 
     // Platform logic
     if (kIsWeb) {
