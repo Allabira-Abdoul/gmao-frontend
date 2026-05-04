@@ -5,7 +5,7 @@ import 'package:frontend/domain/repositories/auth_repository.dart';
 
 class HttpAuthRepository implements AuthRepository {
   final String baseUrl =
-      'http://ec2-34-254-90-255.eu-west-1.compute.amazonaws.com/api/authentication';
+      'https://ec2-34-254-90-255.eu-west-1.compute.amazonaws.com/api/authentication';
 
   // Use a persistent http.Client to enable connection pooling.
   final http.Client _client = http.Client();
