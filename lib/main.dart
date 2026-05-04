@@ -19,6 +19,7 @@ import 'package:frontend/presentation/pages/technicien_dashboard.dart';
 import 'package:frontend/presentation/pages/manager_dashboard.dart';
 import 'package:frontend/presentation/pages/admin_dashboard.dart';
 import 'package:frontend/presentation/pages/unauthorized_platform_page.dart';
+import 'package:frontend/presentation/widgets/auth_guard.dart';
 
 void main() async {
   // Initialize Flutter first to allow us to run context.read
@@ -93,12 +94,18 @@ class MyApp extends StatelessWidget {
       initialRoute: '/login',
       routes: {
         '/login': (context) => const LoginPage(),
-        '/technicien-dashboard': (context) =>
-            _protectedRoute(const TechnicienDashboard(), ['Technicien']),
-        '/manager-dashboard': (context) =>
-            _protectedRoute(const ManagerDashboard(), ['Manager']),
-        '/admin-dashboard': (context) =>
-            _protectedRoute(const AdminDashboard(), ['Administrateur']),
+        '/technicien-dashboard': (context) => const AuthGuard(
+              requiredRole: 'Technicien',
+              child: TechnicienDashboard(),
+            ),
+        '/manager-dashboard': (context) => const AuthGuard(
+              requiredRole: 'Manager',
+              child: ManagerDashboard(),
+            ),
+        '/admin-dashboard': (context) => const AuthGuard(
+              requiredRole: 'Administrateur',
+              child: AdminDashboard(),
+            ),
         '/unauthorized-platform': (context) => const UnauthorizedPlatformPage(),
       },
     );

@@ -25,13 +25,18 @@ void main() {
     final getCounterUseCase = GetCounterUseCase(counterRepository);
     final incrementCounterUseCase = IncrementCounterUseCase(counterRepository);
 
-    final counterState = CounterState(
-      getCounterUseCase: getCounterUseCase,
-      incrementCounterUseCase: incrementCounterUseCase,
-    );
-
     await tester.pumpWidget(
-      MaterialApp(home: HomePage(counterState: counterState)),
+      MaterialApp(
+        home: ChangeNotifierProvider(
+          create: (_) => CounterState(
+            getCounterUseCase: getCounterUseCase,
+            incrementCounterUseCase: incrementCounterUseCase,
+          ),
+          child: Consumer<CounterState>(
+            builder: (context, counterState, _) => HomePage(counterState: counterState),
+          ),
+        ),
+      ),
     );
     await tester.pumpAndSettle();
 
