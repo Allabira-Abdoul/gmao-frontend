@@ -25,6 +25,7 @@ void main() async {
   // Initialize Flutter first to allow us to run context.read
   WidgetsFlutterBinding.ensureInitialized();
 
+//
   // Infrastructure
   final counterRepository = InMemoryCounterRepository();
   final authRepository = HttpAuthRepository();
@@ -54,6 +55,7 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
+
 
   @override
   Widget build(BuildContext context) {

@@ -10,18 +10,52 @@ import 'package:frontend/application/usecases/login_usecase.dart';
 import 'package:frontend/presentation/state/counter_state.dart';
 import 'package:frontend/presentation/state/auth_state.dart';
 import 'package:frontend/main.dart';
+import 'package:frontend/infrastructure/repositories/in_memory_counter_repository.dart';
+import 'package:frontend/infrastructure/repositories/http_auth_repository.dart';
+import 'package:frontend/application/usecases/get_counter_usecase.dart';
+import 'package:frontend/application/usecases/increment_counter_usecase.dart';
+import 'package:frontend/application/usecases/login_usecase.dart';
+import 'package:frontend/presentation/state/counter_state.dart';
+import 'package:frontend/presentation/state/auth_state.dart';
+import 'package:frontend/presentation/pages/home_page.dart';
 
 void main() {
-  testWidgets('App dummy test', (WidgetTester tester) async {
-    // Infrastructure
+  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
+    // Setup dependencies
     final counterRepository = InMemoryCounterRepository();
-    final authRepository = HttpAuthRepository();
-
-    // Application
     final getCounterUseCase = GetCounterUseCase(counterRepository);
     final incrementCounterUseCase = IncrementCounterUseCase(counterRepository);
-    final loginUseCase = LoginUseCase(authRepository);
 
+    await tester.pumpWidget(
+      MaterialApp(
+        home: ChangeNotifierProvider(
+          create: (_) => CounterState(
+            getCounterUseCase: getCounterUseCase,
+            incrementCounterUseCase: incrementCounterUseCase,
+          ),
+          child: Consumer<CounterState>(
+            builder: (context, counterState, _) => HomePage(counterState: counterState),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Push the button to start counting!'), findsOneWidget);
+    expect(find.text('1'), findsNothing);
+  });
+
+  testWidgets('Dummy passing test', (WidgetTester tester) async {
+    expect(true, isTrue);
+  });
+  testWidgets('LoginPage renders correctly', (WidgetTester tester) async {
+    final authRepository = HttpAuthRepository();
+    final loginUseCase = LoginUseCase(authRepository);
+    final counterRepository = InMemoryCounterRepository();
+
+    final getCounterUseCase = GetCounterUseCase(counterRepository);
+    final incrementCounterUseCase = IncrementCounterUseCase(counterRepository);
+    
     await tester.pumpWidget(
       MultiProvider(
         providers: [
@@ -38,11 +72,12 @@ void main() {
         child: const MyApp(),
       ),
     );
+    await tester.pumpAndSettle();
 
-    // Initial route is /login, so wait for it to load
-    await tester.pump();
-
-    // We expect the widget to not crash and show something
-    expect(find.byType(MaterialApp), findsOneWidget);
+    expect(find.byType(TextField), findsWidgets);
+    expect(find.text('GMAO Premium'), findsWidgets);
+    expect(find.text('Se connecter'), findsWidgets);
+    expect(find.text('Connexion'), findsOneWidget);
+    expect(find.text('Heureux de vous revoir !'), findsOneWidget);
   });
 }

@@ -14,7 +14,20 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _isPasswordVisible = false;
+
+  // ⚡ Bolt Optimization: Use ValueNotifier instead of setState to prevent
+  // rebuilding the entire page (including expensive backdrop filters)
+  // just to toggle password visibility.
+  final ValueNotifier<bool> _isPasswordVisible = ValueNotifier<bool>(false);
+
+  @override
+  void dispose() {
+    // ⚡ Bolt Optimization: Dispose controllers and notifiers to prevent memory leaks.
+    _emailController.dispose();
+    _passwordController.dispose();
+    _isPasswordVisible.dispose();
+    super.dispose();
+  }
 
   Future<void> _handleLogin() async {
     final authState = context.read<AuthState>();
@@ -67,12 +80,18 @@ class _LoginPageState extends State<LoginPage> {
           Positioned(
             top: -100,
             right: -100,
-            child: _buildBackgroundCircle(300, Colors.white.withOpacity(0.1)),
+            child: _buildBackgroundCircle(
+              300,
+              Colors.white.withValues(alpha: 0.1),
+            ),
           ),
           Positioned(
             bottom: -50,
             left: -50,
-            child: _buildBackgroundCircle(200, Colors.white.withOpacity(0.1)),
+            child: _buildBackgroundCircle(
+              200,
+              Colors.white.withValues(alpha: 0.1),
+            ),
           ),
 
           // Main Content
@@ -154,7 +173,7 @@ class _LoginPageState extends State<LoginPage> {
                     textAlign: TextAlign.center,
                     style: GoogleFonts.inter(
                       fontSize: 16,
-                      color: Colors.white.withOpacity(0.8),
+                      color: Colors.white.withValues(alpha: 0.8),
                     ),
                   ),
                 ],
@@ -200,10 +219,10 @@ class _LoginPageState extends State<LoginPage> {
         child: Container(
           padding: const EdgeInsets.all(32),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.15),
+            color: Colors.white.withValues(alpha: 0.15),
             borderRadius: BorderRadius.circular(24),
             border: Border.all(
-              color: Colors.white.withOpacity(0.2),
+              color: Colors.white.withValues(alpha: 0.2),
               width: 1.5,
             ),
           ),
@@ -233,7 +252,7 @@ class _LoginPageState extends State<LoginPage> {
               'Heureux de vous revoir !',
               style: GoogleFonts.inter(
                 fontSize: 14,
-                color: Colors.white.withOpacity(0.7),
+                color: Colors.white.withValues(alpha: 0.7),
               ),
             ),
             const SizedBox(height: 32),
@@ -249,17 +268,20 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 20),
 
             // Password Field
-            _buildTextField(
-              label: 'Mot de passe',
-              controller: _passwordController,
-              icon: Icons.lock_outline,
-              isPassword: true,
-              isPasswordVisible: _isPasswordVisible,
-              enabled: authState.status != AuthStatus.loading,
-              onPasswordToggle: () {
-                setState(() {
-                  _isPasswordVisible = !_isPasswordVisible;
-                });
+            ValueListenableBuilder<bool>(
+              valueListenable: _isPasswordVisible,
+              builder: (context, isVisible, child) {
+                return _buildTextField(
+                  label: 'Mot de passe',
+                  controller: _passwordController,
+                  icon: Icons.lock_outline,
+                  isPassword: true,
+                  isPasswordVisible: isVisible,
+                  enabled: authState.status != AuthStatus.loading,
+                  onPasswordToggle: () {
+                    _isPasswordVisible.value = !_isPasswordVisible.value;
+                  },
+                );
               },
             ),
 
@@ -273,7 +295,7 @@ class _LoginPageState extends State<LoginPage> {
                 child: Text(
                   'Mot de passe oublié ?',
                   style: GoogleFonts.inter(
-                    color: Colors.white.withOpacity(0.8),
+                    color: Colors.white.withValues(alpha: 0.8),
                     fontSize: 13,
                   ),
                 ),
@@ -304,9 +326,14 @@ class _LoginPageState extends State<LoginPage> {
                         width: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
+<<<<<<< sentinel-auth-guard-16677451656422747240
                           valueColor: AlwaysStoppedAnimation<Color>(
                             Color(0xFF764BA2),
                           ),
+=======
+                          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF764BA2)),
+                          semanticsLabel: 'Connexion en cours',
+>>>>>>> main
                         ),
                       )
                     : Text(
@@ -328,7 +355,7 @@ class _LoginPageState extends State<LoginPage> {
                 Text(
                   'Pas encore de compte ?',
                   style: GoogleFonts.inter(
-                    color: Colors.white.withOpacity(0.7),
+                    color: Colors.white.withValues(alpha: 0.7),
                     fontSize: 14,
                   ),
                 ),
@@ -369,7 +396,7 @@ class _LoginPageState extends State<LoginPage> {
         Text(
           label,
           style: GoogleFonts.inter(
-            color: Colors.white.withOpacity(0.9),
+            color: Colors.white.withValues(alpha: 0.9),
             fontSize: 13,
             fontWeight: FontWeight.w500,
           ),
@@ -383,8 +410,9 @@ class _LoginPageState extends State<LoginPage> {
           style: const TextStyle(color: Colors.white),
           decoration: InputDecoration(
             filled: true,
-            fillColor: Colors.white.withOpacity(0.1),
+            fillColor: Colors.white.withValues(alpha: 0.1),
             prefixIcon: Icon(icon, color: Colors.white70, size: 20),
+<<<<<<< sentinel-auth-guard-16677451656422747240
             suffixIcon: isPassword
                 ? IconButton(
                     icon: Icon(
@@ -400,6 +428,22 @@ class _LoginPageState extends State<LoginPage> {
             hintText: 'Entrez votre $label',
             hintStyle: TextStyle(
               color: Colors.white.withOpacity(0.4),
+=======
+            suffixIcon: isPassword 
+              ? IconButton(
+                  icon: Icon(
+                    isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                    color: Colors.white70,
+                    size: 20,
+                  ),
+                  onPressed: enabled ? onPasswordToggle : null,
+                  tooltip: isPasswordVisible ? 'Masquer le mot de passe' : 'Afficher le mot de passe',
+                )
+              : null,
+            hintText: 'Entrez votre $label',
+            hintStyle: TextStyle(
+              color: Colors.white.withValues(alpha: 0.4),
+>>>>>>> main
               fontSize: 14,
             ),
             border: OutlineInputBorder(
@@ -408,12 +452,18 @@ class _LoginPageState extends State<LoginPage> {
             ),
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: Colors.white.withOpacity(0.1)),
+              borderSide: BorderSide(
+                color: Colors.white.withValues(alpha: 0.1),
+              ),
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
               borderSide: BorderSide(
+<<<<<<< sentinel-auth-guard-16677451656422747240
                 color: Colors.white.withOpacity(0.3),
+=======
+                color: Colors.white.withValues(alpha: 0.3),
+>>>>>>> main
                 width: 2,
               ),
             ),

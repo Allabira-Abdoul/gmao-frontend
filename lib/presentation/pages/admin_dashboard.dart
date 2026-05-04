@@ -16,6 +16,7 @@ class AdminDashboard extends StatelessWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
+            tooltip: 'Déconnexion',
             onPressed: () {
               context.read<AuthState>().logout();
               Navigator.of(context).pushReplacementNamed('/login');
