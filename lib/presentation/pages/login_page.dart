@@ -14,7 +14,20 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  bool _isPasswordVisible = false;
+
+  // ⚡ Bolt Optimization: Use ValueNotifier instead of setState to prevent
+  // rebuilding the entire page (including expensive backdrop filters)
+  // just to toggle password visibility.
+  final ValueNotifier<bool> _isPasswordVisible = ValueNotifier<bool>(false);
+
+  @override
+  void dispose() {
+    // ⚡ Bolt Optimization: Dispose controllers and notifiers to prevent memory leaks.
+    _emailController.dispose();
+    _passwordController.dispose();
+    _isPasswordVisible.dispose();
+    super.dispose();
+  }
 
   Future<void> _handleLogin() async {
     final authState = context.read<AuthState>();
@@ -255,17 +268,20 @@ class _LoginPageState extends State<LoginPage> {
             const SizedBox(height: 20),
 
             // Password Field
-            _buildTextField(
-              label: 'Mot de passe',
-              controller: _passwordController,
-              icon: Icons.lock_outline,
-              isPassword: true,
-              isPasswordVisible: _isPasswordVisible,
-              enabled: authState.status != AuthStatus.loading,
-              onPasswordToggle: () {
-                setState(() {
-                  _isPasswordVisible = !_isPasswordVisible;
-                });
+            ValueListenableBuilder<bool>(
+              valueListenable: _isPasswordVisible,
+              builder: (context, isVisible, child) {
+                return _buildTextField(
+                  label: 'Mot de passe',
+                  controller: _passwordController,
+                  icon: Icons.lock_outline,
+                  isPassword: true,
+                  isPasswordVisible: isVisible,
+                  enabled: authState.status != AuthStatus.loading,
+                  onPasswordToggle: () {
+                    _isPasswordVisible.value = !_isPasswordVisible.value;
+                  },
+                );
               },
             ),
 
@@ -310,9 +326,8 @@ class _LoginPageState extends State<LoginPage> {
                         width: 20,
                         child: CircularProgressIndicator(
                           strokeWidth: 2,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                            Color(0xFF764BA2),
-                          ),
+                          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF764BA2)),
+                          semanticsLabel: 'Connexion en cours',
                         ),
                       )
                     : Text(
@@ -391,21 +406,20 @@ class _LoginPageState extends State<LoginPage> {
             filled: true,
             fillColor: Colors.white.withValues(alpha: 0.1),
             prefixIcon: Icon(icon, color: Colors.white70, size: 20),
-            suffixIcon: isPassword
-                ? IconButton(
-                    icon: Icon(
-                      isPasswordVisible
-                          ? Icons.visibility
-                          : Icons.visibility_off,
-                      color: Colors.white70,
-                      size: 20,
-                    ),
-                    onPressed: enabled ? onPasswordToggle : null,
-                  )
-                : null,
+            suffixIcon: isPassword 
+              ? IconButton(
+                  icon: Icon(
+                    isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                    color: Colors.white70,
+                    size: 20,
+                  ),
+                  onPressed: enabled ? onPasswordToggle : null,
+                  tooltip: isPasswordVisible ? 'Masquer le mot de passe' : 'Afficher le mot de passe',
+                )
+              : null,
             hintText: 'Entrez votre $label',
             hintStyle: TextStyle(
-              color: Colors.white.withValues(alpha: 0.4),
+              color: Colors.white.withOpacity(0.4),
               fontSize: 14,
             ),
             border: OutlineInputBorder(
@@ -421,7 +435,7 @@ class _LoginPageState extends State<LoginPage> {
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(16),
               borderSide: BorderSide(
-                color: Colors.white.withValues(alpha: 0.3),
+                color: Colors.white.withOpacity(0.3),
                 width: 2,
               ),
             ),

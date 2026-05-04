@@ -12,3 +12,9 @@
 ## 2026-05-03 - Added Tooltip to Password Visibility Toggle
 **Learning:** Icon-only buttons (like a password visibility toggle) can lack semantic meaning for screen reader users if no label or tooltip is provided.
 **Action:** Always ensure icon-only `IconButton` widgets have a dynamic `tooltip` reflecting their current state and action.
+## 2024-05-18 - [Flutter Web Accessibility tooltips]
+**Learning:** In Flutter, icon-only buttons (like a password visibility toggle) lack inherent semantic meaning for screen readers. While `semanticsLabel` can be used on many widgets, simply providing a `tooltip` on an `IconButton` serves dual purposes: it provides a hover tooltip for desktop/web users and acts as the accessible label for screen readers.
+**Action:** Always add a descriptive `tooltip` property to `IconButton` widgets, especially when they only contain icons, to ensure both visual and screen reader accessibility.
+## 2024-05-01 - Tooltips for icon-only buttons
+**Learning:** Found multiple icon-only `IconButton`s (password visibility toggle, dashboard logout buttons) lacking tooltips. This is a common accessibility issue for screen readers and missing context for mouse hover users.
+**Action:** Always add `tooltip` properties to `IconButton`s containing only an icon, ensuring the text is correctly localized for the user interface context (e.g., 'Déconnexion' instead of 'Logout' for a French UI).
