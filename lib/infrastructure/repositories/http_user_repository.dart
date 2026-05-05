@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:isolate';
 import 'package:http/http.dart' as http;
 import 'package:frontend/domain/entities/user.dart';
 import 'package:frontend/domain/repositories/user_repository.dart';
@@ -48,9 +47,7 @@ class HttpUserRepository implements UserRepository {
     );
 
     if (response.statusCode == 200) {
-      // ⚡ Bolt Optimization: Use Isolate.run to parse large JSON lists off the main thread,
-      // preventing UI jank when dealing with complex or large API responses.
-      return await Isolate.run(() => _parseUsers(response.body));
+      return _parseUsers(response.body);
     } else {
       throw Exception('Failed to load users: ${response.body}');
     }
