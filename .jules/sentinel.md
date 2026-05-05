@@ -23,3 +23,7 @@
 **Vulnerability:** JWT tokens (access and refresh) were stored in plaintext using `SharedPreferences`.
 **Learning:** `SharedPreferences` saves data in plaintext XML on Android and `NSUserDefaults` on iOS, making sensitive tokens easily accessible to attackers who compromise the device or application space. This can lead to account takeover.
 **Prevention:** Always use secure storage solutions like `flutter_secure_storage` (which uses Keystore on Android and Keychain on iOS) for storing authentication tokens or other sensitive secrets.
+## 2025-05-05 - Information Exposure through API Exception Messages
+**Vulnerability:** API error responses (which may include server stack traces or sensitive architecture details during e.g. 500 Internal Server Error) were being embedded directly into application exception messages using `${response.body}`. These messages were then inadvertently exposed to the end user via the UI.
+**Learning:** Returning unparsed raw error responses from the backend client directly in Exceptions exposes backend details and could leak sensitive infrastructure information to a malicious actor.
+**Prevention:** Catch exception messages at the infrastructure layer. Only provide generic status codes or safe strings like `Status Code: ${response.statusCode}` to the UI layer, and let the backend securely log its own raw stack traces.

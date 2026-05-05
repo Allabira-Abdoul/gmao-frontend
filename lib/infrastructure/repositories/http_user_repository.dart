@@ -30,7 +30,7 @@ class HttpUserRepository implements UserRepository {
       final responseData = jsonDecode(response.body);
       return User.fromMap(responseData['data']);
     } else {
-      throw Exception('Failed to load current user: ${response.body}');
+      throw Exception('Failed to load current user (Status Code: ${response.statusCode})');
     }
   }
 
@@ -49,7 +49,7 @@ class HttpUserRepository implements UserRepository {
     if (response.statusCode == 200) {
       return _parseUsers(response.body);
     } else {
-      throw Exception('Failed to load users: ${response.body}');
+      throw Exception('Failed to load users (Status Code: ${response.statusCode})');
     }
   }
 
@@ -68,7 +68,7 @@ class HttpUserRepository implements UserRepository {
       final responseData = jsonDecode(response.body);
       return User.fromMap(responseData['data']);
     } else {
-      throw Exception('Failed to create user: ${response.body}');
+      throw Exception('Failed to create user (Status Code: ${response.statusCode})');
     }
   }
 
@@ -91,7 +91,7 @@ class HttpUserRepository implements UserRepository {
       final responseData = jsonDecode(response.body);
       return User.fromMap(responseData['data']);
     } else {
-      throw Exception('Failed to update user: ${response.body}');
+      throw Exception('Failed to update user (Status Code: ${response.statusCode})');
     }
   }
 
@@ -106,7 +106,7 @@ class HttpUserRepository implements UserRepository {
     );
 
     if (response.statusCode != 200) {
-      throw Exception('Failed to delete user: ${response.body}');
+      throw Exception('Failed to delete user (Status Code: ${response.statusCode})');
     }
   }
 }

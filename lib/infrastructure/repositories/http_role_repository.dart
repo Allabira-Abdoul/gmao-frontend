@@ -24,7 +24,7 @@ class HttpRoleRepository implements RoleRepository {
       final List<dynamic> data = responseData['data'] ?? [];
       return data.map((map) => Role.fromMap(map)).toList();
     } else {
-      throw Exception('Failed to load roles: ${response.body}');
+      throw Exception('Failed to load roles (Status Code: ${response.statusCode})');
     }
   }
 }
