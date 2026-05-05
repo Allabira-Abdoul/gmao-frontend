@@ -1,10 +1,18 @@
 import 'dart:convert';
+import 'dart:isolate';
 import 'package:http/http.dart' as http;
 import 'package:frontend/domain/entities/user.dart';
 import 'package:frontend/domain/repositories/user_repository.dart';
 
+List<User> _parseUsers(String responseBody) {
+  final responseData = jsonDecode(responseBody);
+  final List<dynamic> data = responseData['data'] ?? [];
+  return data.map((map) => User.fromMap(map)).toList();
+}
+
 class HttpUserRepository implements UserRepository {
-  final String baseUrl = 'https://ec2-34-254-90-255.eu-west-1.compute.amazonaws.com/api/user';
+  final String baseUrl =
+      'https://ec2-34-254-90-255.eu-west-1.compute.amazonaws.com/api/user';
   final http.Client _client;
 
   HttpUserRepository(this._client);
@@ -30,7 +38,9 @@ class HttpUserRepository implements UserRepository {
   @override
   Future<List<User>> getUsers(String token) async {
     final response = await _client.get(
-      Uri.parse('$baseUrl/users?per_page=100'), // Fetch more users for simple table
+      Uri.parse(
+        '$baseUrl/users?per_page=100',
+      ), // Fetch more users for simple table
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $token',
@@ -38,9 +48,9 @@ class HttpUserRepository implements UserRepository {
     );
 
     if (response.statusCode == 200) {
-      final responseData = jsonDecode(response.body);
-      final List<dynamic> data = responseData['data'] ?? [];
-      return data.map((map) => User.fromMap(map)).toList();
+      // ⚡ Bolt Optimization: Use Isolate.run to parse large JSON lists off the main thread,
+      // preventing UI jank when dealing with complex or large API responses.
+      return await Isolate.run(() => _parseUsers(response.body));
     } else {
       throw Exception('Failed to load users: ${response.body}');
     }
@@ -66,7 +76,11 @@ class HttpUserRepository implements UserRepository {
   }
 
   @override
-  Future<User> updateUser(String token, String id, Map<String, dynamic> data) async {
+  Future<User> updateUser(
+    String token,
+    String id,
+    Map<String, dynamic> data,
+  ) async {
     final response = await _client.put(
       Uri.parse('$baseUrl/users/$id'),
       headers: {
