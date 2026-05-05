@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-import 'package:http/http.dart' as http;
+import 'package:http/http.dart' as http;  // needed for http.Client()
 import 'package:frontend/infrastructure/http/authenticated_client.dart';
 import 'package:frontend/application/usecases/refresh_token_usecase.dart';
 
@@ -48,8 +48,7 @@ void main() async {
   await authState.checkAuth();
 
   // 3. Authenticated Client
-  final innerClient = http.Client();
-  final authenticatedClient = AuthenticatedClient(authState, innerClient);
+  final authenticatedClient = AuthenticatedClient(authState, http.Client());
 
   // 4. Other Infrastructure
   final counterRepository = InMemoryCounterRepository();

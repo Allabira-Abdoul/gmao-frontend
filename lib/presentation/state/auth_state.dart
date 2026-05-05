@@ -1,5 +1,6 @@
-import 'package:flutter/foundation.dart';
-
+import 'dart:io' show Platform;
+import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:frontend/application/usecases/refresh_token_usecase.dart';
@@ -115,14 +116,14 @@ class AuthState extends ChangeNotifier {
     if (kIsWeb) {
       // Everyone can access web
       return _getDashboardByRole(role);
-    } else if (defaultTargetPlatform == TargetPlatform.android) {
+    } else if (Platform.isAndroid) {
       // Android is for technicien
       if (role == 'Technicien') {
         return '/technicien-dashboard';
       } else {
         return '/unauthorized-platform';
       }
-    } else if (defaultTargetPlatform == TargetPlatform.windows) {
+    } else if (Platform.isWindows) {
       // Windows is for the others (Manager, Administrateur)
       if (role == 'Manager' || role == 'Administrateur') {
         return _getDashboardByRole(role);

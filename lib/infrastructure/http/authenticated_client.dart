@@ -1,74 +1,106 @@
-import 'dart:async';
 import 'package:http/http.dart' as http;
+import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:frontend/presentation/state/auth_state.dart';
 
-class AuthenticatedClient extends http.BaseClient {
+/// A web-compatible HTTP helper that proactively refreshes the access token
+/// before each request if it is expired, then injects the Bearer header.
+///
+/// This avoids using [http.BaseClient.send()] overrides which rely on
+/// dart:io primitives (RawReceivePort) incompatible with Flutter Web.
+class AuthenticatedClient {
   final AuthState authState;
   final http.Client _inner;
 
   AuthenticatedClient(this.authState, this._inner);
 
-  @override
-  Future<http.StreamedResponse> send(http.BaseRequest request) async {
-    // We clone the request because streams can only be consumed once.
-    // However, if the request is a simple Request (not StreamedRequest), we can clone it easily.
-    // If we want to be safe, we try sending it. If it fails with 401, we clone and retry.
-    // Since http.BaseRequest does not have a clone method, we have to manually copy it.
-    
-    // First, attach the current token if available
-    if (authState.accessToken != null) {
-      request.headers['Authorization'] = 'Bearer ${authState.accessToken}';
-    }
+  /// Returns valid headers with an up-to-date Authorization token.
+  /// Refreshes the token first if it is expired.
+  Future<Map<String, String>> authenticatedHeaders([
+    Map<String, String> extra = const {},
+  ]) async {
+    await _ensureFreshToken();
+    return {
+      'Content-Type': 'application/json',
+      if (authState.accessToken != null)
+        'Authorization': 'Bearer ${authState.accessToken}',
+      ...extra,
+    };
+  }
 
-    final initialRequest = await _copyRequest(request);
-    
-    var response = await _inner.send(request);
-
+  Future<http.Response> get(Uri url) async {
+    final headers = await authenticatedHeaders();
+    final response = await _inner.get(url, headers: headers);
     if (response.statusCode == 401) {
-      // Token might be expired. Try to refresh.
-      final success = await authState.refreshTokens();
-      
-      if (success && authState.accessToken != null) {
-        // Retry with new token
-        final retryRequest = await _copyRequest(initialRequest);
-        retryRequest.headers['Authorization'] = 'Bearer ${authState.accessToken}';
-        return _inner.send(retryRequest);
-      }
+      return _retryGet(url);
     }
-
     return response;
   }
 
-  Future<http.BaseRequest> _copyRequest(http.BaseRequest request) async {
-    if (request is http.Request) {
-      final copy = http.Request(request.method, request.url)
-        ..headers.addAll(request.headers)
-        ..followRedirects = request.followRedirects
-        ..maxRedirects = request.maxRedirects
-        ..persistentConnection = request.persistentConnection;
-      
-      if (request.bodyBytes.isNotEmpty) {
-        copy.bodyBytes = request.bodyBytes;
-      }
-      return copy;
-    } else if (request is http.MultipartRequest) {
-      final copy = http.MultipartRequest(request.method, request.url)
-        ..headers.addAll(request.headers)
-        ..fields.addAll(request.fields)
-        ..files.addAll(request.files);
-      return copy;
-    } else if (request is http.StreamedRequest) {
-      // NOTE: StreamedRequest cannot be easily copied because the stream is consumed.
-      // For this app, we mainly use http.Request via client.get, client.post.
-      throw Exception('Copying StreamedRequest is not supported');
+  Future<http.Response> post(Uri url, {Object? body}) async {
+    final headers = await authenticatedHeaders();
+    final response = await _inner.post(url, headers: headers, body: body);
+    if (response.statusCode == 401) {
+      return _retryPost(url, body: body);
     }
-    
-    throw Exception('Unsupported request type');
+    return response;
   }
 
-  @override
-  void close() {
-    _inner.close();
-    super.close();
+  Future<http.Response> put(Uri url, {Object? body}) async {
+    final headers = await authenticatedHeaders();
+    final response = await _inner.put(url, headers: headers, body: body);
+    if (response.statusCode == 401) {
+      return _retryPut(url, body: body);
+    }
+    return response;
   }
+
+  Future<http.Response> delete(Uri url) async {
+    final headers = await authenticatedHeaders();
+    final response = await _inner.delete(url, headers: headers);
+    if (response.statusCode == 401) {
+      return _retryDelete(url);
+    }
+    return response;
+  }
+
+  // ── Retry helpers (called after a 401) ──────────────────────────────────
+
+  Future<http.Response> _retryGet(Uri url) async {
+    final refreshed = await authState.refreshTokens();
+    if (!refreshed) return http.Response('Unauthorized', 401);
+    final headers = await authenticatedHeaders();
+    return _inner.get(url, headers: headers);
+  }
+
+  Future<http.Response> _retryPost(Uri url, {Object? body}) async {
+    final refreshed = await authState.refreshTokens();
+    if (!refreshed) return http.Response('Unauthorized', 401);
+    final headers = await authenticatedHeaders();
+    return _inner.post(url, headers: headers, body: body);
+  }
+
+  Future<http.Response> _retryPut(Uri url, {Object? body}) async {
+    final refreshed = await authState.refreshTokens();
+    if (!refreshed) return http.Response('Unauthorized', 401);
+    final headers = await authenticatedHeaders();
+    return _inner.put(url, headers: headers, body: body);
+  }
+
+  Future<http.Response> _retryDelete(Uri url) async {
+    final refreshed = await authState.refreshTokens();
+    if (!refreshed) return http.Response('Unauthorized', 401);
+    final headers = await authenticatedHeaders();
+    return _inner.delete(url, headers: headers);
+  }
+
+  // ── Token freshness ─────────────────────────────────────────────────────
+
+  Future<void> _ensureFreshToken() async {
+    final token = authState.accessToken;
+    if (token != null && JwtDecoder.isExpired(token)) {
+      await authState.refreshTokens();
+    }
+  }
+
+  void close() => _inner.close();
 }
