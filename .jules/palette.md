@@ -18,3 +18,7 @@
 ## 2024-05-01 - Tooltips for icon-only buttons
 **Learning:** Found multiple icon-only `IconButton`s (password visibility toggle, dashboard logout buttons) lacking tooltips. This is a common accessibility issue for screen readers and missing context for mouse hover users.
 **Action:** Always add `tooltip` properties to `IconButton`s containing only an icon, ensuring the text is correctly localized for the user interface context (e.g., 'Déconnexion' instead of 'Logout' for a French UI).
+
+## 2026-05-05 - Keyboard Navigation and Password Manager Integration in Login Forms
+**Learning:** In Flutter login forms, particularly for Web and Desktop targets, inputs without `AutofillGroup`, `autofillHints`, and `textInputAction` hinder accessibility and seamless integration with password managers. Proper configuration allows users to navigate the form using the keyboard and facilitates saving/autofilling credentials.
+**Action:** Always wrap form fields related to authentication with an `AutofillGroup` and provide `autofillHints`, `textInputAction`, and `onSubmitted` properties to improve keyboard accessibility and password manager support.
