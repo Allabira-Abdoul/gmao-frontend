@@ -79,51 +79,129 @@ class _UserManagementPageState extends State<UserManagementPage> {
             return Center(child: Text('Erreur: ${state.error}'));
           }
 
-          return SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: SingleChildScrollView(
-              child: DataTable(
-                columns: const [
-                  DataColumn(label: Text('Nom Complet')),
-                  DataColumn(label: Text('Email')),
-                  DataColumn(label: Text('Rôle')),
-                  DataColumn(label: Text('Statut')),
-                  DataColumn(label: Text('Actions')),
-                ],
-                rows: state.users.map((user) {
-                  return DataRow(
-                    cells: [
-                      DataCell(Text(user.nomComplet)),
-                      DataCell(Text(user.email)),
-                      DataCell(Text(user.role)),
-                      DataCell(
-                        Chip(
-                          label: Text(
-                            user.statutCompte,
-                            style: const TextStyle(color: Colors.white, fontSize: 12),
-                          ),
-                          backgroundColor: user.statutCompte == 'ACTIVE' ? Colors.green : Colors.red,
-                        ),
-                      ),
-                      DataCell(
-                        Row(
-                          children: [
-                            IconButton(
-                              icon: const Icon(Icons.edit, color: Colors.blue),
-                              onPressed: () => _showUserForm(user.id),
+          return LayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.maxWidth > 600) {
+                // Desktop/Large screen view
+                return SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  child: SingleChildScrollView(
+                    child: DataTable(
+                      columns: const [
+                        DataColumn(label: Text('Nom Complet')),
+                        DataColumn(label: Text('Email')),
+                        DataColumn(label: Text('Rôle')),
+                        DataColumn(label: Text('Statut')),
+                        DataColumn(label: Text('Actions')),
+                      ],
+                      rows: state.users.map((user) {
+                        return DataRow(
+                          cells: [
+                            DataCell(Text(user.nomComplet)),
+                            DataCell(Text(user.email)),
+                            DataCell(Text(user.role)),
+                            DataCell(
+                              Chip(
+                                label: Text(
+                                  user.statutCompte,
+                                  style: const TextStyle(color: Colors.white, fontSize: 12),
+                                ),
+                                backgroundColor: user.statutCompte == 'ACTIVE' ? Colors.green : Colors.red,
+                              ),
                             ),
-                            IconButton(
-                              icon: const Icon(Icons.delete, color: Colors.red),
-                              onPressed: () => _confirmDelete(user.id, user.nomComplet),
+                            DataCell(
+                              Row(
+                                children: [
+                                  IconButton(
+                                    icon: const Icon(Icons.edit, color: Colors.blue),
+                                    onPressed: () => _showUserForm(user.id),
+                                  ),
+                                  IconButton(
+                                    icon: const Icon(Icons.delete, color: Colors.red),
+                                    onPressed: () => _confirmDelete(user.id, user.nomComplet),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                );
+              } else {
+                // Mobile screen view
+                return ListView.builder(
+                  itemCount: state.users.length,
+                  itemBuilder: (context, index) {
+                    final user = state.users[index];
+                    return Card(
+                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      elevation: 2,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    user.nomComplet.isNotEmpty ? user.nomComplet : 'Sans Nom',
+                                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                  ),
+                                ),
+                                Chip(
+                                  label: Text(
+                                    user.statutCompte,
+                                    style: const TextStyle(color: Colors.white, fontSize: 10),
+                                  ),
+                                  backgroundColor: user.statutCompte == 'ACTIVE' ? Colors.green : Colors.red,
+                                  padding: EdgeInsets.zero,
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            Row(
+                              children: [
+                                const Icon(Icons.email, size: 16, color: Colors.grey),
+                                const SizedBox(width: 8),
+                                Expanded(child: Text(user.email, style: const TextStyle(color: Colors.grey))),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Row(
+                              children: [
+                                const Icon(Icons.badge, size: 16, color: Colors.grey),
+                                const SizedBox(width: 8),
+                                Text(user.role, style: const TextStyle(color: Colors.grey)),
+                              ],
+                            ),
+                            const Divider(height: 24),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                TextButton.icon(
+                                  icon: const Icon(Icons.edit, color: Colors.blue, size: 18),
+                                  label: const Text('Éditer', style: TextStyle(color: Colors.blue)),
+                                  onPressed: () => _showUserForm(user.id),
+                                ),
+                                TextButton.icon(
+                                  icon: const Icon(Icons.delete, color: Colors.red, size: 18),
+                                  label: const Text('Supprimer', style: TextStyle(color: Colors.red)),
+                                  onPressed: () => _confirmDelete(user.id, user.nomComplet),
+                                ),
+                              ],
                             ),
                           ],
                         ),
                       ),
-                    ],
-                  );
-                }).toList(),
-              ),
-            ),
+                    );
+                  },
+                );
+              }
+            },
           );
         },
       ),
