@@ -16,3 +16,6 @@
 ## 2024-05-24 - Dart HTTP Connection Pooling Optimization
 **Learning:** Using the top-level functions (like `http.post()`, `http.get()`) from Dart's `http` package creates and closes a new `http.Client` (and thus a new TCP connection) for every single request. This introduces significant overhead due to repeated DNS resolutions and TCP/TLS handshakes, especially for sequential API calls.
 **Action:** Always instantiate a persistent `http.Client` (e.g., `final http.Client _client = http.Client();`) within repository or service classes to enable TCP keep-alive and connection pooling across multiple HTTP requests.
+## 2024-05-24 - Dart JSON Parsing Isolate Optimization
+**Learning:** Parsing large JSON lists into complex objects (like a list of `User` entities) on the main thread in Dart can cause UI jank (dropped frames), especially on low-end devices or the web. The `jsonDecode` and `map` operations are synchronous and block the event loop.
+**Action:** Use `Isolate.run()` to offload the parsing of large JSON arrays from HTTP responses into a separate background isolate. This keeps the main thread free to handle animations and user input.
