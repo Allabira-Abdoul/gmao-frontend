@@ -22,3 +22,6 @@
 ## 2026-05-05 - Keyboard Navigation and Password Manager Integration in Login Forms
 **Learning:** In Flutter login forms, particularly for Web and Desktop targets, inputs without `AutofillGroup`, `autofillHints`, and `textInputAction` hinder accessibility and seamless integration with password managers. Proper configuration allows users to navigate the form using the keyboard and facilitates saving/autofilling credentials.
 **Action:** Always wrap form fields related to authentication with an `AutofillGroup` and provide `autofillHints`, `textInputAction`, and `onSubmitted` properties to improve keyboard accessibility and password manager support.
+## 2024-05-06 - Tooltips for Accessibility on Icon Buttons
+**Learning:** Icon-only buttons (`IconButton`, `FloatingActionButton`) in Flutter lack semantic meaning for screen readers and don't provide context to users on platforms with mouse hover.
+**Action:** Always provide a `tooltip` parameter for `IconButton` and `FloatingActionButton` widgets when they do not have an explicit label to ensure accessibility and better UX.
