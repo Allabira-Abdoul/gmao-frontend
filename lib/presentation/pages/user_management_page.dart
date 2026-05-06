@@ -65,6 +65,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
+            tooltip: 'Rafraîchir',
             onPressed: () => context.read<UserManagementState>().fetchUsersAndRoles(),
           ),
         ],
@@ -114,10 +115,12 @@ class _UserManagementPageState extends State<UserManagementPage> {
                                 children: [
                                   IconButton(
                                     icon: const Icon(Icons.edit, color: Colors.blue),
+                                    tooltip: 'Éditer l\'utilisateur',
                                     onPressed: () => _showUserForm(user.id),
                                   ),
                                   IconButton(
                                     icon: const Icon(Icons.delete, color: Colors.red),
+                                    tooltip: 'Supprimer l\'utilisateur',
                                     onPressed: () => _confirmDelete(user.id, user.nomComplet),
                                   ),
                                 ],
@@ -207,6 +210,7 @@ class _UserManagementPageState extends State<UserManagementPage> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showUserForm(),
+        tooltip: 'Ajouter un utilisateur',
         child: const Icon(Icons.add),
       ),
     );
