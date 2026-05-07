@@ -87,7 +87,6 @@ void main() async {
             updateUserUseCase: updateUserUseCase,
             deleteUserUseCase: deleteUserUseCase,
             getRolesUseCase: getRolesUseCase,
-            authState: authState,
           ),
         ),
       ],

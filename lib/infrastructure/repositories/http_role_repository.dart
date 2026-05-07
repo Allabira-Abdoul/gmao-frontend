@@ -11,7 +11,7 @@ class HttpRoleRepository implements RoleRepository {
   HttpRoleRepository(this._client);
 
   @override
-  Future<List<Role>> getRoles(String token) async {
+  Future<List<Role>> getRoles() async {
     final response = await _client.get(Uri.parse('$baseUrl/roles'));
 
     if (response.statusCode == 200) {
