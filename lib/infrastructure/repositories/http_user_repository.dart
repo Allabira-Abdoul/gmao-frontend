@@ -11,7 +11,7 @@ class HttpUserRepository implements UserRepository {
   HttpUserRepository(this._client);
 
   @override
-  Future<User> getCurrentUser(String token) async {
+  Future<User> getCurrentUser() async {
     final response = await _client.get(Uri.parse('$baseUrl/users/me'));
 
     if (response.statusCode == 200) {
@@ -23,7 +23,7 @@ class HttpUserRepository implements UserRepository {
   }
 
   @override
-  Future<List<User>> getUsers(String token) async {
+  Future<List<User>> getUsers() async {
     final response =
         await _client.get(Uri.parse('$baseUrl/users?per_page=100'));
 
@@ -37,7 +37,7 @@ class HttpUserRepository implements UserRepository {
   }
 
   @override
-  Future<User> createUser(String token, Map<String, dynamic> data) async {
+  Future<User> createUser(Map<String, dynamic> data) async {
     final response = await _client.post(
       Uri.parse('$baseUrl/users'),
       body: jsonEncode(data),
@@ -53,7 +53,6 @@ class HttpUserRepository implements UserRepository {
 
   @override
   Future<User> updateUser(
-    String token,
     String id,
     Map<String, dynamic> data,
   ) async {
@@ -71,7 +70,7 @@ class HttpUserRepository implements UserRepository {
   }
 
   @override
-  Future<void> deleteUser(String token, String id) async {
+  Future<void> deleteUser(String id) async {
     final response = await _client.delete(Uri.parse('$baseUrl/users/$id'));
 
     if (response.statusCode != 200) {

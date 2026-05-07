@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/application/usecases/user_management_usecases.dart';
 import 'package:frontend/domain/entities/user.dart';
-import 'package:frontend/presentation/state/auth_state.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -24,12 +23,9 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _fetchProfile() async {
-    final token = context.read<AuthState>().accessToken;
-    if (token == null) return;
-
     try {
       final useCase = context.read<GetCurrentUserUseCase>();
-      final user = await useCase.execute(token);
+      final user = await useCase.execute();
       if (mounted) {
         setState(() {
           _fullUser = user;
