@@ -25,3 +25,7 @@
 ## 2024-05-06 - Tooltips for Accessibility on Icon Buttons
 **Learning:** Icon-only buttons (`IconButton`, `FloatingActionButton`) in Flutter lack semantic meaning for screen readers and don't provide context to users on platforms with mouse hover.
 **Action:** Always provide a `tooltip` parameter for `IconButton` and `FloatingActionButton` widgets when they do not have an explicit label to ensure accessibility and better UX.
+
+## 2024-05-14 - Empty States on Data Grids
+**Learning:** In Flutter data applications with dynamic grids/lists, an unhandled empty list state often results in a blank screen or a confusingly empty layout grid, leaving users unsure if the app is loading, broken, or simply lacks data.
+**Action:** Always implement a dedicated "empty state" layout for lists and data tables that provides a visual indicator (icon), descriptive text, and a direct call-to-action (e.g., "Add Item" button) to guide the user's next steps.

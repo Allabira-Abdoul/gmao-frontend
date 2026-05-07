@@ -80,6 +80,25 @@ class _UserManagementPageState extends State<UserManagementPage> {
             return Center(child: Text('Erreur: ${state.error}'));
           }
 
+          if (!state.isLoading && state.users.isEmpty && state.error == null) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.people_outline, size: 64, color: Colors.grey),
+                  const SizedBox(height: 16),
+                  const Text('Aucun utilisateur trouvé', style: TextStyle(fontSize: 18, color: Colors.grey)),
+                  const SizedBox(height: 16),
+                  ElevatedButton.icon(
+                    onPressed: () => _showUserForm(),
+                    icon: const Icon(Icons.add),
+                    label: const Text('Ajouter un utilisateur'),
+                  ),
+                ],
+              ),
+            );
+          }
+
           return LayoutBuilder(
             builder: (context, constraints) {
               if (constraints.maxWidth > 600) {
