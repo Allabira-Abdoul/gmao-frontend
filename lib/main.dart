@@ -126,7 +126,10 @@ class MyApp extends StatelessWidget {
           initialRoute: initialRoute,
           routes: {
             '/login': (context) => const LoginPage(),
-            '/profile': (context) => const ProfilePage(),
+            '/profile': (context) => const AuthGuard(
+              allowedRoles: ['Technicien', 'Manager', 'Administrateur'],
+              child: ProfilePage(),
+            ),
             '/technicien-dashboard': (context) => const AuthGuard(
               allowedRoles: ['Technicien'],
               child: TechnicienDashboard(),
