@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 
-import 'package:http/http.dart' as http;  // needed for http.Client()
+import 'package:http/http.dart' as http; // needed for http.Client()
 import 'package:frontend/infrastructure/http/authenticated_client.dart';
 import 'package:frontend/application/usecases/refresh_token_usecase.dart';
 
@@ -42,8 +42,8 @@ void main() async {
 
   // 2. Auth State
   final authState = AuthState(
-    loginUseCase: loginUseCase, 
-    refreshTokenUseCase: refreshTokenUseCase
+    loginUseCase: loginUseCase,
+    refreshTokenUseCase: refreshTokenUseCase,
   );
   await authState.checkAuth();
 
@@ -58,7 +58,7 @@ void main() async {
   // 5. Other Application Use Cases
   final getCounterUseCase = GetCounterUseCase(counterRepository);
   final incrementCounterUseCase = IncrementCounterUseCase(counterRepository);
-  
+
   final getUsersUseCase = GetUsersUseCase(userRepository);
   final createUserUseCase = CreateUserUseCase(userRepository);
   final updateUserUseCase = UpdateUserUseCase(userRepository);
@@ -74,12 +74,8 @@ void main() async {
             incrementCounterUseCase: incrementCounterUseCase,
           ),
         ),
-        ChangeNotifierProvider.value(
-          value: authState,
-        ),
-        Provider.value(
-          value: GetCurrentUserUseCase(userRepository),
-        ),
+        ChangeNotifierProvider.value(value: authState),
+        Provider.value(value: GetCurrentUserUseCase(userRepository)),
         ChangeNotifierProvider(
           create: (_) => UserManagementState(
             getUsersUseCase: getUsersUseCase,
@@ -98,17 +94,16 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-
   @override
   Widget build(BuildContext context) {
     return Consumer<AuthState>(
       builder: (context, authState, child) {
         String initialRoute = '/login';
         if (authState.status == AuthStatus.authenticated) {
-           final redirectPath = authState.getPlatformRedirect();
-           if (redirectPath != null) {
-              initialRoute = redirectPath;
-           }
+          final redirectPath = authState.getPlatformRedirect();
+          if (redirectPath != null) {
+            initialRoute = redirectPath;
+          }
         }
 
         return MaterialApp(
@@ -145,7 +140,8 @@ class MyApp extends StatelessWidget {
               allowedRoles: ['Administrateur'],
               child: UserManagementPage(),
             ),
-            '/unauthorized-platform': (context) => const UnauthorizedPlatformPage(),
+            '/unauthorized-platform': (context) =>
+                const UnauthorizedPlatformPage(),
           },
         );
       },

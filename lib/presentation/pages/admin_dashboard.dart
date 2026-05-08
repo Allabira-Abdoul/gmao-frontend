@@ -55,7 +55,10 @@ class AdminDashboard extends StatelessWidget {
               icon: const Icon(Icons.people),
               label: const Text('Gestion des Utilisateurs'),
               style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
               ),
             ),
           ],

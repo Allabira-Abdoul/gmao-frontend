@@ -18,21 +18,26 @@ class HttpUserRepository implements UserRepository {
       final responseData = jsonDecode(response.body);
       return User.fromMap(responseData['data']);
     } else {
-      throw Exception('Failed to load current user (Status Code: ${response.statusCode})');
+      throw Exception(
+        'Failed to load current user (Status Code: ${response.statusCode})',
+      );
     }
   }
 
   @override
   Future<List<User>> getUsers() async {
-    final response =
-        await _client.get(Uri.parse('$baseUrl/users?per_page=100'));
+    final response = await _client.get(
+      Uri.parse('$baseUrl/users?per_page=100'),
+    );
 
     if (response.statusCode == 200) {
       final responseData = jsonDecode(response.body);
       final List<dynamic> data = responseData['data'] ?? [];
       return data.map((map) => User.fromMap(map)).toList();
     } else {
-      throw Exception('Failed to load users (Status Code: ${response.statusCode})');
+      throw Exception(
+        'Failed to load users (Status Code: ${response.statusCode})',
+      );
     }
   }
 
@@ -47,15 +52,14 @@ class HttpUserRepository implements UserRepository {
       final responseData = jsonDecode(response.body);
       return User.fromMap(responseData['data']);
     } else {
-      throw Exception('Failed to create user (Status Code: ${response.statusCode})');
+      throw Exception(
+        'Failed to create user (Status Code: ${response.statusCode})',
+      );
     }
   }
 
   @override
-  Future<User> updateUser(
-    String id,
-    Map<String, dynamic> data,
-  ) async {
+  Future<User> updateUser(String id, Map<String, dynamic> data) async {
     final response = await _client.put(
       Uri.parse('$baseUrl/users/$id'),
       body: jsonEncode(data),
@@ -65,7 +69,9 @@ class HttpUserRepository implements UserRepository {
       final responseData = jsonDecode(response.body);
       return User.fromMap(responseData['data']);
     } else {
-      throw Exception('Failed to update user (Status Code: ${response.statusCode})');
+      throw Exception(
+        'Failed to update user (Status Code: ${response.statusCode})',
+      );
     }
   }
 
@@ -74,7 +80,9 @@ class HttpUserRepository implements UserRepository {
     final response = await _client.delete(Uri.parse('$baseUrl/users/$id'));
 
     if (response.statusCode != 200) {
-      throw Exception('Failed to delete user (Status Code: ${response.statusCode})');
+      throw Exception(
+        'Failed to delete user (Status Code: ${response.statusCode})',
+      );
     }
   }
 }

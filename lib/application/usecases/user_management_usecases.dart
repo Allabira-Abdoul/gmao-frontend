@@ -17,13 +17,15 @@ class GetUsersUseCase {
 class CreateUserUseCase {
   final UserRepository repository;
   CreateUserUseCase(this.repository);
-  Future<User> execute(Map<String, dynamic> data) => repository.createUser(data);
+  Future<User> execute(Map<String, dynamic> data) =>
+      repository.createUser(data);
 }
 
 class UpdateUserUseCase {
   final UserRepository repository;
   UpdateUserUseCase(this.repository);
-  Future<User> execute(String id, Map<String, dynamic> data) => repository.updateUser(id, data);
+  Future<User> execute(String id, Map<String, dynamic> data) =>
+      repository.updateUser(id, data);
 }
 
 class DeleteUserUseCase {
