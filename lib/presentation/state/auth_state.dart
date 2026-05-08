@@ -26,8 +26,8 @@ class AuthState extends ChangeNotifier {
   AuthState({
     required LoginUseCase loginUseCase,
     required RefreshTokenUseCase refreshTokenUseCase,
-  })  : _loginUseCase = loginUseCase,
-        _refreshTokenUseCase = refreshTokenUseCase;
+  }) : _loginUseCase = loginUseCase,
+       _refreshTokenUseCase = refreshTokenUseCase;
 
   String? _accessToken;
   String? get accessToken => _accessToken;
@@ -41,12 +41,12 @@ class AuthState extends ChangeNotifier {
       }
 
       final tokens = await _refreshTokenUseCase.execute(refreshToken);
-      
+
       // Update storage and memory
       await _storage.write(key: 'access_token', value: tokens.accessToken);
       await _storage.write(key: 'refresh_token', value: tokens.refreshToken);
       _accessToken = tokens.accessToken;
-      
+
       return true;
     } catch (e) {
       await logout();

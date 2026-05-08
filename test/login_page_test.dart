@@ -9,7 +9,9 @@ import 'package:frontend/application/usecases/refresh_token_usecase.dart';
 import 'package:frontend/infrastructure/repositories/http_auth_repository.dart';
 
 void main() {
-  testWidgets('LoginPage password visibility toggle test', (WidgetTester tester) async {
+  testWidgets('LoginPage password visibility toggle test', (
+    WidgetTester tester,
+  ) async {
     final authRepository = HttpAuthRepository();
     final authState = AuthState(
       loginUseCase: LoginUseCase(authRepository),
@@ -18,9 +20,7 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         home: MultiProvider(
-          providers: [
-            ChangeNotifierProvider.value(value: authState),
-          ],
+          providers: [ChangeNotifierProvider.value(value: authState)],
           child: const LoginPage(),
         ),
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:frontend/application/usecases/user_management_usecases.dart';
 import 'package:frontend/domain/entities/user.dart';
+
 class UserManagementState extends ChangeNotifier {
   final GetUsersUseCase getUsersUseCase;
   final CreateUserUseCase createUserUseCase;
