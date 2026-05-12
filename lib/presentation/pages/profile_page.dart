@@ -3,7 +3,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/application/usecases/user_management_usecases.dart';
 import 'package:frontend/domain/entities/user.dart';
-import 'package:frontend/presentation/state/auth_state.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -24,12 +23,9 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   Future<void> _fetchProfile() async {
-    final token = context.read<AuthState>().accessToken;
-    if (token == null) return;
-
     try {
       final useCase = context.read<GetCurrentUserUseCase>();
-      final user = await useCase.execute(token);
+      final user = await useCase.execute();
       if (mounted) {
         setState(() {
           _fullUser = user;
@@ -49,9 +45,7 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Mon Profil', style: GoogleFonts.outfit()),
-      ),
+      appBar: AppBar(title: Text('Mon Profil', style: GoogleFonts.outfit())),
       body: _buildBody(),
     );
   }
@@ -94,7 +88,9 @@ class _ProfilePageState extends State<ProfilePage> {
           constraints: const BoxConstraints(maxWidth: 600),
           child: Card(
             elevation: 4,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16),
+            ),
             child: Padding(
               padding: const EdgeInsets.all(32.0),
               child: Column(
@@ -105,31 +101,44 @@ class _ProfilePageState extends State<ProfilePage> {
                       radius: 50,
                       backgroundColor: Theme.of(context).colorScheme.primary,
                       child: Text(
-                        _fullUser!.nomComplet.isNotEmpty 
-                            ? _fullUser!.nomComplet[0].toUpperCase() 
+                        _fullUser!.nomComplet.isNotEmpty
+                            ? _fullUser!.nomComplet[0].toUpperCase()
                             : '?',
-                        style: const TextStyle(fontSize: 40, color: Colors.white),
+                        style: const TextStyle(
+                          fontSize: 40,
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
                   const SizedBox(height: 32),
-                  _buildProfileItem(Icons.person, 'Nom Complet', _fullUser!.nomComplet),
+                  _buildProfileItem(
+                    Icons.person,
+                    'Nom Complet',
+                    _fullUser!.nomComplet,
+                  ),
                   const Divider(),
                   _buildProfileItem(Icons.email, 'Email', _fullUser!.email),
                   const Divider(),
                   _buildProfileItem(Icons.badge, 'Rôle', _fullUser!.role),
                   const Divider(),
                   _buildProfileItem(
-                    Icons.security, 
-                    'Statut du compte', 
+                    Icons.security,
+                    'Statut du compte',
                     _fullUser!.statutCompte,
-                    valueColor: _fullUser!.statutCompte == 'ACTIVE' ? Colors.green : Colors.red,
+                    valueColor: _fullUser!.statutCompte == 'ACTIVE'
+                        ? Colors.green
+                        : Colors.red,
                   ),
                   const Divider(),
                   const SizedBox(height: 16),
                   Text(
                     'Privilèges accordés:',
-                    style: GoogleFonts.inter(fontSize: 16, fontWeight: FontWeight.w600, color: Colors.grey[700]),
+                    style: GoogleFonts.inter(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey[700],
+                    ),
                   ),
                   const SizedBox(height: 8),
                   Wrap(
@@ -137,7 +146,10 @@ class _ProfilePageState extends State<ProfilePage> {
                     runSpacing: 8.0,
                     children: _fullUser!.privileges.map((privilege) {
                       return Chip(
-                        label: Text(privilege, style: const TextStyle(fontSize: 12)),
+                        label: Text(
+                          privilege,
+                          style: const TextStyle(fontSize: 12),
+                        ),
                         backgroundColor: Colors.grey[200],
                       );
                     }).toList(),
@@ -151,7 +163,12 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Widget _buildProfileItem(IconData icon, String label, String value, {Color? valueColor}) {
+  Widget _buildProfileItem(
+    IconData icon,
+    String label,
+    String value, {
+    Color? valueColor,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       child: Row(
@@ -169,7 +186,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 Text(
                   value,
                   style: GoogleFonts.inter(
-                    fontSize: 18, 
+                    fontSize: 18,
                     fontWeight: FontWeight.w500,
                     color: valueColor ?? Colors.black87,
                   ),

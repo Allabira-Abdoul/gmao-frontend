@@ -31,7 +31,9 @@ class _UserManagementPageState extends State<UserManagementPage> {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Confirmer la suppression'),
-        content: Text('Voulez-vous vraiment supprimer l\'utilisateur "$name" ?'),
+        content: Text(
+          'Voulez-vous vraiment supprimer l\'utilisateur "$name" ?',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -41,16 +43,25 @@ class _UserManagementPageState extends State<UserManagementPage> {
             onPressed: () async {
               Navigator.pop(context);
               final scaffoldMessenger = ScaffoldMessenger.of(context);
-              final success = await context.read<UserManagementState>().deleteUser(id);
+              final success = await context
+                  .read<UserManagementState>()
+                  .deleteUser(id);
               scaffoldMessenger.showSnackBar(
                 SnackBar(
-                  content: Text(success ? 'Utilisateur supprimé' : 'Erreur lors de la suppression'),
+                  content: Text(
+                    success
+                        ? 'Utilisateur supprimé'
+                        : 'Erreur lors de la suppression',
+                  ),
                   backgroundColor: success ? Colors.green : Colors.red,
                 ),
               );
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-            child: const Text('Supprimer', style: TextStyle(color: Colors.white)),
+            child: const Text(
+              'Supprimer',
+              style: TextStyle(color: Colors.white),
+            ),
           ),
         ],
       ),
@@ -66,7 +77,8 @@ class _UserManagementPageState extends State<UserManagementPage> {
           IconButton(
             icon: const Icon(Icons.refresh),
             tooltip: 'Rafraîchir',
-            onPressed: () => context.read<UserManagementState>().fetchUsersAndRoles(),
+            onPressed: () =>
+                context.read<UserManagementState>().fetchUsersAndRoles(),
           ),
         ],
       ),
@@ -85,9 +97,16 @@ class _UserManagementPageState extends State<UserManagementPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.people_outline, size: 64, color: Colors.grey),
+                  const Icon(
+                    Icons.people_outline,
+                    size: 64,
+                    color: Colors.grey,
+                  ),
                   const SizedBox(height: 16),
-                  const Text('Aucun utilisateur trouvé', style: TextStyle(fontSize: 18, color: Colors.grey)),
+                  const Text(
+                    'Aucun utilisateur trouvé',
+                    style: TextStyle(fontSize: 18, color: Colors.grey),
+                  ),
                   const SizedBox(height: 16),
                   ElevatedButton.icon(
                     onPressed: () => _showUserForm(),
@@ -124,23 +143,37 @@ class _UserManagementPageState extends State<UserManagementPage> {
                               Chip(
                                 label: Text(
                                   user.statutCompte,
-                                  style: const TextStyle(color: Colors.white, fontSize: 12),
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 12,
+                                  ),
                                 ),
-                                backgroundColor: user.statutCompte == 'ACTIVE' ? Colors.green : Colors.red,
+                                backgroundColor: user.statutCompte == 'ACTIVE'
+                                    ? Colors.green
+                                    : Colors.red,
                               ),
                             ),
                             DataCell(
                               Row(
                                 children: [
                                   IconButton(
-                                    icon: const Icon(Icons.edit, color: Colors.blue),
+                                    icon: const Icon(
+                                      Icons.edit,
+                                      color: Colors.blue,
+                                    ),
                                     tooltip: 'Éditer l\'utilisateur',
                                     onPressed: () => _showUserForm(user.id),
                                   ),
                                   IconButton(
-                                    icon: const Icon(Icons.delete, color: Colors.red),
+                                    icon: const Icon(
+                                      Icons.delete,
+                                      color: Colors.red,
+                                    ),
                                     tooltip: 'Supprimer l\'utilisateur',
-                                    onPressed: () => _confirmDelete(user.id, user.nomComplet),
+                                    onPressed: () => _confirmDelete(
+                                      user.id,
+                                      user.nomComplet,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -158,7 +191,10 @@ class _UserManagementPageState extends State<UserManagementPage> {
                   itemBuilder: (context, index) {
                     final user = state.users[index];
                     return Card(
-                      margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      margin: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 8,
+                      ),
                       elevation: 2,
                       child: Padding(
                         padding: const EdgeInsets.all(16.0),
@@ -170,16 +206,26 @@ class _UserManagementPageState extends State<UserManagementPage> {
                               children: [
                                 Expanded(
                                   child: Text(
-                                    user.nomComplet.isNotEmpty ? user.nomComplet : 'Sans Nom',
-                                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                    user.nomComplet.isNotEmpty
+                                        ? user.nomComplet
+                                        : 'Sans Nom',
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                                 Chip(
                                   label: Text(
                                     user.statutCompte,
-                                    style: const TextStyle(color: Colors.white, fontSize: 10),
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 10,
+                                    ),
                                   ),
-                                  backgroundColor: user.statutCompte == 'ACTIVE' ? Colors.green : Colors.red,
+                                  backgroundColor: user.statutCompte == 'ACTIVE'
+                                      ? Colors.green
+                                      : Colors.red,
                                   padding: EdgeInsets.zero,
                                 ),
                               ],
@@ -187,17 +233,33 @@ class _UserManagementPageState extends State<UserManagementPage> {
                             const SizedBox(height: 8),
                             Row(
                               children: [
-                                const Icon(Icons.email, size: 16, color: Colors.grey),
+                                const Icon(
+                                  Icons.email,
+                                  size: 16,
+                                  color: Colors.grey,
+                                ),
                                 const SizedBox(width: 8),
-                                Expanded(child: Text(user.email, style: const TextStyle(color: Colors.grey))),
+                                Expanded(
+                                  child: Text(
+                                    user.email,
+                                    style: const TextStyle(color: Colors.grey),
+                                  ),
+                                ),
                               ],
                             ),
                             const SizedBox(height: 4),
                             Row(
                               children: [
-                                const Icon(Icons.badge, size: 16, color: Colors.grey),
+                                const Icon(
+                                  Icons.badge,
+                                  size: 16,
+                                  color: Colors.grey,
+                                ),
                                 const SizedBox(width: 8),
-                                Text(user.role, style: const TextStyle(color: Colors.grey)),
+                                Text(
+                                  user.role,
+                                  style: const TextStyle(color: Colors.grey),
+                                ),
                               ],
                             ),
                             const Divider(height: 24),
@@ -205,14 +267,29 @@ class _UserManagementPageState extends State<UserManagementPage> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 TextButton.icon(
-                                  icon: const Icon(Icons.edit, color: Colors.blue, size: 18),
-                                  label: const Text('Éditer', style: TextStyle(color: Colors.blue)),
+                                  icon: const Icon(
+                                    Icons.edit,
+                                    color: Colors.blue,
+                                    size: 18,
+                                  ),
+                                  label: const Text(
+                                    'Éditer',
+                                    style: TextStyle(color: Colors.blue),
+                                  ),
                                   onPressed: () => _showUserForm(user.id),
                                 ),
                                 TextButton.icon(
-                                  icon: const Icon(Icons.delete, color: Colors.red, size: 18),
-                                  label: const Text('Supprimer', style: TextStyle(color: Colors.red)),
-                                  onPressed: () => _confirmDelete(user.id, user.nomComplet),
+                                  icon: const Icon(
+                                    Icons.delete,
+                                    color: Colors.red,
+                                    size: 18,
+                                  ),
+                                  label: const Text(
+                                    'Supprimer',
+                                    style: TextStyle(color: Colors.red),
+                                  ),
+                                  onPressed: () =>
+                                      _confirmDelete(user.id, user.nomComplet),
                                 ),
                               ],
                             ),

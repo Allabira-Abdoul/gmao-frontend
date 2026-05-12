@@ -13,13 +13,14 @@ class UserFormDialog extends StatefulWidget {
 
 class _UserFormDialogState extends State<UserFormDialog> {
   final _formKey = GlobalKey<FormState>();
-  
+
   late TextEditingController _nomCompletController;
   late TextEditingController _emailController;
   late TextEditingController _passwordController;
-  
+
   String? _selectedRoleId;
   String _selectedStatus = 'ACTIVE';
+  bool _isPasswordVisible = false;
 
   @override
   void initState() {
@@ -73,11 +74,20 @@ class _UserFormDialogState extends State<UserFormDialog> {
         if (success) {
           Navigator.pop(context);
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(widget.userId == null ? 'Utilisateur créé' : 'Utilisateur mis à jour')),
+            SnackBar(
+              content: Text(
+                widget.userId == null
+                    ? 'Utilisateur créé'
+                    : 'Utilisateur mis à jour',
+              ),
+            ),
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Erreur: ${state.error ?? "Inconnue"}'), backgroundColor: Colors.red),
+            SnackBar(
+              content: Text('Erreur: ${state.error ?? "Inconnue"}'),
+              backgroundColor: Colors.red,
+            ),
           );
         }
       }
@@ -100,21 +110,50 @@ class _UserFormDialogState extends State<UserFormDialog> {
               TextFormField(
                 controller: _nomCompletController,
                 decoration: const InputDecoration(labelText: 'Nom Complet'),
-                validator: (value) => value == null || value.isEmpty ? 'Champ requis' : null,
+                keyboardType: TextInputType.name,
+                textCapitalization: TextCapitalization.words,
+                textInputAction: TextInputAction.next,
+                validator: (value) =>
+                    value == null || value.isEmpty ? 'Champ requis' : null,
               ),
               const SizedBox(height: 16),
               TextFormField(
                 controller: _emailController,
                 decoration: const InputDecoration(labelText: 'Email'),
-                validator: (value) => value == null || !value.contains('@') ? 'Email invalide' : null,
+                keyboardType: TextInputType.emailAddress,
+                textInputAction: TextInputAction.next,
+                validator: (value) => value == null || !value.contains('@')
+                    ? 'Email invalide'
+                    : null,
               ),
               const SizedBox(height: 16),
               if (!isEditing) // Only show password field on creation
                 TextFormField(
                   controller: _passwordController,
-                  decoration: const InputDecoration(labelText: 'Mot de passe'),
-                  obscureText: true,
-                  validator: (value) => value == null || value.length < 8 ? 'Minimum 8 caractères' : null,
+                  decoration: InputDecoration(
+                    labelText: 'Mot de passe',
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                      ),
+                      tooltip: _isPasswordVisible
+                          ? 'Masquer le mot de passe'
+                          : 'Afficher le mot de passe',
+                      onPressed: () {
+                        setState(() {
+                          _isPasswordVisible = !_isPasswordVisible;
+                        });
+                      },
+                    ),
+                  ),
+                  obscureText: !_isPasswordVisible,
+                  textInputAction: TextInputAction.done,
+                  onFieldSubmitted: (_) => _submit(),
+                  validator: (value) => value == null || value.length < 8
+                      ? 'Minimum 8 caractères'
+                      : null,
                 ),
               if (!isEditing) const SizedBox(height: 16),
               DropdownButtonFormField<String>(
@@ -127,7 +166,8 @@ class _UserFormDialogState extends State<UserFormDialog> {
                   );
                 }).toList(),
                 onChanged: (value) => setState(() => _selectedRoleId = value),
-                validator: (value) => value == null ? 'Sélectionnez un rôle' : null,
+                validator: (value) =>
+                    value == null ? 'Sélectionnez un rôle' : null,
               ),
               if (isEditing) const SizedBox(height: 16),
               if (isEditing)
@@ -137,9 +177,13 @@ class _UserFormDialogState extends State<UserFormDialog> {
                   items: const [
                     DropdownMenuItem(value: 'ACTIVE', child: Text('Actif')),
                     DropdownMenuItem(value: 'INACTIVE', child: Text('Inactif')),
-                    DropdownMenuItem(value: 'LOCKED', child: Text('Verrouillé')),
+                    DropdownMenuItem(
+                      value: 'LOCKED',
+                      child: Text('Verrouillé'),
+                    ),
                   ],
-                  onChanged: (value) => setState(() => _selectedStatus = value!),
+                  onChanged: (value) =>
+                      setState(() => _selectedStatus = value!),
                 ),
             ],
           ),
@@ -152,8 +196,15 @@ class _UserFormDialogState extends State<UserFormDialog> {
         ),
         ElevatedButton(
           onPressed: state.isLoading ? null : _submit,
-          child: state.isLoading 
-              ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
+          child: state.isLoading
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    semanticsLabel: 'Enregistrement en cours',
+                  ),
+                )
               : const Text('Enregistrer'),
         ),
       ],

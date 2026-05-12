@@ -29,3 +29,6 @@
 ## 2024-05-14 - Empty States on Data Grids
 **Learning:** In Flutter data applications with dynamic grids/lists, an unhandled empty list state often results in a blank screen or a confusingly empty layout grid, leaving users unsure if the app is loading, broken, or simply lacks data.
 **Action:** Always implement a dedicated "empty state" layout for lists and data tables that provides a visual indicator (icon), descriptive text, and a direct call-to-action (e.g., "Add Item" button) to guide the user's next steps.
+## 2024-05-18 - Keyboard Navigation in Flutter Dialog Forms
+**Learning:** Standard Flutter FormFields (like those inside AlertDialogs) do not automatically provide optimal keyboard navigation (e.g., 'Next' or 'Done' actions on mobile keyboards). This causes significant friction where users must manually dismiss the keyboard to find the next input or submit button.
+**Action:** Always add explicit `TextInputAction` (e.g., `TextInputAction.next` or `TextInputAction.done`) and the appropriate `keyboardType` to form fields. For the final field in a form, tie `onFieldSubmitted` directly to the form submission logic to enable seamless entry.
