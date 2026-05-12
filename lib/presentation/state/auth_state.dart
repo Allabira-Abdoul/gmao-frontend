@@ -61,6 +61,27 @@ class AuthState extends ChangeNotifier {
     try {
       final token = await _storage.read(key: 'access_token');
       if (token != null) {
+        // Handle dummy tokens
+        if (token.startsWith('dummy_')) {
+          String role = 'Technicien';
+          if (token.contains('admin')) role = 'Administrateur';
+          if (token.contains('manager')) role = 'Manager';
+
+          _currentUser = User(
+            id: 'dummy-id',
+            nomComplet: 'Dummy $role',
+            email: 'dummy@test.com',
+            statutCompte: 'ACTIVE',
+            idRole: 'dummy-role-id',
+            role: role,
+            privileges: [],
+          );
+          _accessToken = token;
+          _status = AuthStatus.authenticated;
+          notifyListeners();
+          return;
+        }
+
         if (!JwtDecoder.isExpired(token)) {
           Map<String, dynamic> decodedToken = JwtDecoder.decode(token);
           _currentUser = User.fromMap(decodedToken);
@@ -84,6 +105,39 @@ class AuthState extends ChangeNotifier {
     notifyListeners();
 
     try {
+      // Dummy logins for testing
+      if (email.endsWith('@dummy.com')) {
+        String role = 'Technicien';
+        String tokenType = 'tech';
+        if (email.startsWith('admin')) {
+          role = 'Administrateur';
+          tokenType = 'admin';
+        } else if (email.startsWith('manager')) {
+          role = 'Manager';
+          tokenType = 'manager';
+        }
+
+        final dummyToken = 'dummy_${tokenType}_token';
+        
+        await _storage.write(key: 'access_token', value: dummyToken);
+        await _storage.write(key: 'refresh_token', value: dummyToken);
+
+        _currentUser = User(
+          id: 'dummy-id',
+          nomComplet: 'Dummy $role',
+          email: email,
+          statutCompte: 'ACTIVE',
+          idRole: 'dummy-role-id',
+          role: role,
+          privileges: [],
+        );
+        _accessToken = dummyToken;
+
+        _status = AuthStatus.authenticated;
+        notifyListeners();
+        return;
+      }
+
       final tokens = await _loginUseCase.execute(email, password);
 
       // Persist tokens securely

@@ -256,7 +256,40 @@ class _LoginPageState extends State<LoginPage> {
                   color: Colors.white.withValues(alpha: 0.7),
                 ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 16),
+              
+              // Dummy Credentials Notice
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: Colors.amber.withValues(alpha: 0.5)),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      '🛠️ Accès Test (Bypass Backend)',
+                      style: GoogleFonts.inter(
+                        color: Colors.amber,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      'Admin: admin@dummy.com\nManager: manager@dummy.com\nTech: tech@dummy.com',
+                      style: GoogleFonts.inter(
+                        color: Colors.white.withValues(alpha: 0.9),
+                        fontSize: 12,
+                        height: 1.5,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 24),
 
               // Email Field
               _buildTextField(
