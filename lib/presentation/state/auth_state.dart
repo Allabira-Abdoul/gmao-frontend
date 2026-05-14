@@ -1,5 +1,3 @@
-import 'dart:io' show Platform;
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -118,7 +116,7 @@ class AuthState extends ChangeNotifier {
         }
 
         final dummyToken = 'dummy_${tokenType}_token';
-        
+
         await _storage.write(key: 'access_token', value: dummyToken);
         await _storage.write(key: 'refresh_token', value: dummyToken);
 
@@ -155,50 +153,6 @@ class AuthState extends ChangeNotifier {
       _status = AuthStatus.error;
       _errorMessage = e.toString();
       notifyListeners();
-    }
-  }
-
-  /// Check if the user is allowed to access the app based on their role and platform.
-  /// Returns a redirect path or null if allowed.
-  String? getPlatformRedirect() {
-    if (_currentUser == null) return '/login';
-
-    final role =
-        _currentUser!.role; // e.g., "Technicien", "Manager", "Administrateur"
-
-    // Platform logic
-    if (kIsWeb) {
-      // Everyone can access web
-      return _getDashboardByRole(role);
-    } else if (Platform.isAndroid) {
-      // Android is for technicien
-      if (role == 'Technicien') {
-        return '/technicien-dashboard';
-      } else {
-        return '/unauthorized-platform';
-      }
-    } else if (Platform.isWindows) {
-      // Windows is for the others (Manager, Administrateur)
-      if (role == 'Manager' || role == 'Administrateur') {
-        return _getDashboardByRole(role);
-      } else {
-        return '/unauthorized-platform';
-      }
-    }
-
-    return null;
-  }
-
-  String _getDashboardByRole(String role) {
-    switch (role) {
-      case 'Technicien':
-        return '/technicien-dashboard';
-      case 'Manager':
-        return '/manager-dashboard';
-      case 'Administrateur':
-        return '/admin-dashboard';
-      default:
-        return '/login';
     }
   }
 

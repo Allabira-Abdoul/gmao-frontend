@@ -38,6 +38,7 @@ import 'package:frontend/presentation/pages/profile_page.dart';
 import 'package:frontend/presentation/pages/equipements_page.dart';
 import 'package:frontend/presentation/pages/pieces_rechange_page.dart';
 import 'package:frontend/presentation/widgets/auth_guard.dart';
+import 'package:frontend/presentation/routes/app_router.dart';
 
 void main() async {
   // Initialize Flutter first to allow us to run context.read
@@ -63,7 +64,9 @@ void main() async {
   final userRepository = HttpUserRepository(authenticatedClient);
   final roleRepository = HttpRoleRepository(authenticatedClient);
   final equipementRepository = HttpEquipementRepository(authenticatedClient);
-  final pieceRechangeRepository = HttpPieceRechangeRepository(authenticatedClient);
+  final pieceRechangeRepository = HttpPieceRechangeRepository(
+    authenticatedClient,
+  );
 
   // 5. Other Application Use Cases
   final getCounterUseCase = GetCounterUseCase(counterRepository);
@@ -79,10 +82,18 @@ void main() async {
   final updateEquipementUseCase = UpdateEquipementUseCase(equipementRepository);
   final deleteEquipementUseCase = DeleteEquipementUseCase(equipementRepository);
 
-  final getPiecesRechangeUseCase = GetPiecesRechangeUseCase(pieceRechangeRepository);
-  final createPieceRechangeUseCase = CreatePieceRechangeUseCase(pieceRechangeRepository);
-  final updatePieceRechangeUseCase = UpdatePieceRechangeUseCase(pieceRechangeRepository);
-  final deletePieceRechangeUseCase = DeletePieceRechangeUseCase(pieceRechangeRepository);
+  final getPiecesRechangeUseCase = GetPiecesRechangeUseCase(
+    pieceRechangeRepository,
+  );
+  final createPieceRechangeUseCase = CreatePieceRechangeUseCase(
+    pieceRechangeRepository,
+  );
+  final updatePieceRechangeUseCase = UpdatePieceRechangeUseCase(
+    pieceRechangeRepository,
+  );
+  final deletePieceRechangeUseCase = DeletePieceRechangeUseCase(
+    pieceRechangeRepository,
+  );
   final getRolesUseCase = GetRolesUseCase(roleRepository);
 
   runApp(
@@ -136,7 +147,9 @@ class MyApp extends StatelessWidget {
       builder: (context, authState, child) {
         String initialRoute = '/login';
         if (authState.status == AuthStatus.authenticated) {
-          final redirectPath = authState.getPlatformRedirect();
+          final redirectPath = AppRouter.getPlatformRedirect(
+            authState.currentUser,
+          );
           if (redirectPath != null) {
             initialRoute = redirectPath;
           }
