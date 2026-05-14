@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:provider/provider.dart';
 import 'package:frontend/presentation/state/auth_state.dart';
+import 'package:frontend/presentation/routes/app_router.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -39,7 +40,9 @@ class _LoginPageState extends State<LoginPage> {
 
     if (mounted) {
       if (authState.status == AuthStatus.authenticated) {
-        final redirectPath = authState.getPlatformRedirect();
+        final redirectPath = AppRouter.getPlatformRedirect(
+          authState.currentUser,
+        );
         if (redirectPath != null) {
           Navigator.of(context).pushReplacementNamed(redirectPath);
         }
@@ -257,14 +260,16 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
               const SizedBox(height: 16),
-              
+
               // Dummy Credentials Notice
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: Colors.white.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.amber.withValues(alpha: 0.5)),
+                  border: Border.all(
+                    color: Colors.amber.withValues(alpha: 0.5),
+                  ),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,

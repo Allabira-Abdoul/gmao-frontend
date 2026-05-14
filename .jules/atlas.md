@@ -1,0 +1,3 @@
+## 2026-05-14 - Decoupling Auth State from Routing Logic
+Learning: The AuthState object mixed authentication logic (login/logout/token management) with application routing knowledge (understanding platform constraints and mapping roles to paths). This violated the Single Responsibility Principle and made adding new roles or platforms require modifying the core auth class. A switch statement for role paths also violated Open/Closed principle.
+Action: Extracted routing logic into a dedicated `AppRouter` class, and replaced the hardcoded role-to-path `switch` statement with a polymorphic mapping dictionary (`_roleToDashboard`). Now, adding new roles only requires adding a map entry in `AppRouter` without touching `AuthState`.
