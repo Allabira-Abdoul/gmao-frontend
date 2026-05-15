@@ -73,7 +73,11 @@ class _EquipementsPageState extends State<EquipementsPage> {
       body: Consumer<EquipementState>(
         builder: (context, state, child) {
           if (state.isLoading && state.equipements.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: CircularProgressIndicator(
+                semanticsLabel: 'Chargement des équipements',
+              ),
+            );
           }
           if (state.error != null && state.equipements.isEmpty) {
             return Center(child: Text('Erreur: ${state.error}'));

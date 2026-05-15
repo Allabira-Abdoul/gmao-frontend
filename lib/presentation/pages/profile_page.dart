@@ -52,7 +52,11 @@ class _ProfilePageState extends State<ProfilePage> {
 
   Widget _buildBody() {
     if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
+      return const Center(
+        child: CircularProgressIndicator(
+          semanticsLabel: 'Chargement du profil',
+        ),
+      );
     }
 
     if (_error != null) {

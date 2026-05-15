@@ -56,7 +56,11 @@ class _PiecesRechangePageState extends State<PiecesRechangePage> {
       body: Consumer<PieceRechangeState>(
         builder: (context, state, child) {
           if (state.isLoading && state.pieces.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: CircularProgressIndicator(
+                semanticsLabel: 'Chargement des pièces de rechange',
+              ),
+            );
           }
           if (state.error != null && state.pieces.isEmpty) {
             return Center(child: Text('Erreur: ${state.error}'));
