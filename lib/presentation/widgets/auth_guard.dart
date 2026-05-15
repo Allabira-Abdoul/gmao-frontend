@@ -18,7 +18,11 @@ class AuthGuard extends StatelessWidget {
             Navigator.of(context).pushReplacementNamed('/login');
           });
           return const Scaffold(
-            body: Center(child: CircularProgressIndicator()),
+            body: Center(
+              child: CircularProgressIndicator(
+                semanticsLabel: 'Vérification de l\'authentification',
+              ),
+            ),
           );
         }
 

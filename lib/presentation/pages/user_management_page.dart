@@ -85,7 +85,11 @@ class _UserManagementPageState extends State<UserManagementPage> {
       body: Consumer<UserManagementState>(
         builder: (context, state, child) {
           if (state.isLoading && state.users.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(
+              child: CircularProgressIndicator(
+                semanticsLabel: 'Chargement des utilisateurs',
+              ),
+            );
           }
 
           if (state.error != null && state.users.isEmpty) {
